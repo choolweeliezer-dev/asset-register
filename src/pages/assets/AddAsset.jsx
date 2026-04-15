@@ -18,14 +18,16 @@ export default function AddAsset() {
   const [form, setForm] = React.useState({
     id: '',
     name: '',
+    type: '',
     category: '',
     serialNumber: '',
     status: '',
     location: '',
     assignedTo: '',
+    dateOfPurchase: '',
     purchaseCost: '',
     insuranceCoverage: '',
-    dateOfPurchase: '',
+    warranty: '',
     nextMaintenance: '',
     ipAddress: '',
   });
@@ -39,17 +41,19 @@ export default function AddAsset() {
     const newAsset = {
     id: form.id,
     name: form.name,
+    type: assetType,
     category: form.category,
     serialNumber: form.serialNumber,
     status: form.status,
     location: form.location,
     assignedTo: form.assignedTo,
+    dateOfPurchase: form.dateOfPurchase,
     purchaseCost: form.purchaseCost,
     insuranceCoverage: form.insuranceCoverage,
-    dateOfPurchase: form.dateOfPurchase,
+    warranty: form.warranty,
     nextMaintenance: form.nextMaintenance,
     ipAddress: form.ipAddress,
-    type: assetType,
+    
   };
 
   // get existing assets
@@ -99,6 +103,34 @@ export default function AddAsset() {
               {/* Financial */}
               <Card sx={{ mb: 2, width: '100%' }}>
                 <CardContent>
+                   <Typography variant="h6" sx={{ mb: 2 }}>
+                    General Information
+                  </Typography>
+
+                  <Stack spacing={2}>
+                    <Field name="id" label="Asset ID" onChange={handleChange} />
+                    <Field name="name" label="Asset Name" onChange={handleChange} />
+                    <Field name="category" label="Category" onChange={handleChange} />
+                    <Field name="serialNumber" label="Serial Number" onChange={handleChange} />
+                    <Field name="status" label="Status" onChange={handleChange} />
+                    <Field name="location" label="Location" onChange={handleChange} />
+                    <Field name="assignedTo" label="Assigned To" onChange={handleChange} />
+
+                    {/* IT only */}
+                    {assetType === 'it' && (
+                      <Field
+                        name="ipAddress"
+                        label="IP Address"
+                        onChange={handleChange}
+                      />
+                    )}
+                  </Stack>                  
+                </CardContent>
+              </Card>
+
+              {/* Maintenance */}
+              <Card sx={{width:'100%'}}>
+                <CardContent>
                   <Typography variant="h6" sx={{ mb: 2 }}>
                     Financial Information
                   </Typography>
@@ -114,12 +146,20 @@ export default function AddAsset() {
                       label="Insurance Coverage"
                       onChange={handleChange}
                     />
-                  </Stack>
+                     <Field
+                      name="warranty"
+                      label="warranty length (months)"
+                      onChange={handleChange}
+                    />
+                  </Stack>                 
                 </CardContent>
               </Card>
 
-              {/* Maintenance */}
-              <Card sx={{width:'100%'}}>
+            </Grid>
+
+            {/* RIGHT SIDE */}
+            <Grid item xs={12} md={6} sx={{display: 'flex'}}>
+              <Card sx={{width: '100%'}}>
                 <CardContent>
                   <Typography variant="h6" sx={{ mb: 2 }}>
                     Maintenance Information
@@ -141,37 +181,6 @@ export default function AddAsset() {
                       InputLabelProps={{ shrink: true }}
                       onChange={handleChange}
                     />
-                  </Stack>
-                </CardContent>
-              </Card>
-
-            </Grid>
-
-            {/* RIGHT SIDE */}
-            <Grid item xs={12} md={6} sx={{display: 'flex'}}>
-              <Card sx={{width: '100%'}}>
-                <CardContent>
-                  <Typography variant="h6" sx={{ mb: 2 }}>
-                    General Information
-                  </Typography>
-
-                  <Stack spacing={2}>
-                    <Field name="id" label="Asset ID" onChange={handleChange} />
-                    <Field name="name" label="Asset Name" onChange={handleChange} />
-                    <Field name="category" label="Category" onChange={handleChange} />
-                    <Field name="serialNumber" label="Serial Number" onChange={handleChange} />
-                    <Field name="status" label="Status" onChange={handleChange} />
-                    <Field name="location" label="Location" onChange={handleChange} />
-                    <Field name="assignedTo" label="Assigned To" onChange={handleChange} />
-
-                    {/* IT only */}
-                    {assetType === 'it' && (
-                      <Field
-                        name="ipAddress"
-                        label="IP Address"
-                        onChange={handleChange}
-                      />
-                    )}
                   </Stack>
                 </CardContent>
               </Card>

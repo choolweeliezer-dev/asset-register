@@ -25,7 +25,7 @@ export function AssetPreview() {
 
   // MAIN ASSETS (first 5 non-IT assets)
   const mainAssets = assetsMock
-  .filter(asset => !asset.id.startsWith("A"))
+  .filter(asset => !asset.id.startsWith("IT"))
   .slice(0, 5);
 
   // IT ASSETS (first 5 IT assets)

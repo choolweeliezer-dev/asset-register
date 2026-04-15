@@ -71,7 +71,7 @@ export default function FeaturedInfo() {
 
 
   return (
-    <Grid container spacing={5}>
+    <Grid container spacing={3}>
 
       <SubscriptionCard
         subWeek={subWeek}

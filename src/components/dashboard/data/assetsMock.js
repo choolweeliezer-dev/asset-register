@@ -11,11 +11,11 @@ export const assetsMock = [
     purchaseDate: '2025-01-10',
     nextMaintenance: '2026-05-10',
     currentValue: '8000',
-  warranty: '10 years',
-  insuranceCoverage: 'Full', // or Half / None
-  purchaseCost: '12000',
-  purchaseDate: '2024-01-10',
-  lastMaintenance: '2025-10-01'
+    warranty: '10 years',
+    insuranceCoverage: 'Full', // or Half / None
+    purchaseCost: '12000',
+    purchaseDate: '2024-01-10',
+    lastMaintenance: '2025-10-01'
   },
   {
     id: 'A002',

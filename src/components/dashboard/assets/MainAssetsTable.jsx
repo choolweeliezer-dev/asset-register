@@ -1,9 +1,17 @@
 import * as React from 'react';
 import {Table,TableBody,TableCell,TableHead,TableRow,
-  Paper,TablePagination,TextField,MenuItem,Box,
+  Paper,TablePagination,TextField,MenuItem,Box, IconButton, Tooltip
 } from '@mui/material';
+import DeleteIcon from "@mui/icons-material/Delete";
+import { useAssetActions } from './AssetActions';
 
 export default function MainAssetsTable({ rows = [] }) {
+  const {
+    rows: updatedRows,
+    handleOpen,
+    handleDelete,
+    AssetDialog
+  } = useAssetActions(rows);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
@@ -12,7 +20,7 @@ export default function MainAssetsTable({ rows = [] }) {
   const [categoryFilter, setCategoryFilter] = React.useState('all');
 
   // ================= FILTERING =================
-  const filteredRows = rows.filter((row) => {
+  const filteredRows = updatedRows.filter((row) => {
     const matchesSearch =
       row.name?.toLowerCase().includes(search.toLowerCase()) ||
       row.location?.toLowerCase().includes(search.toLowerCase()) ||
@@ -40,7 +48,7 @@ export default function MainAssetsTable({ rows = [] }) {
   const handleRowsPerPageChange = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
-  };
+  }; 
 
   return (
     <Paper sx={{ p: 2, overflowX: 'auto' }}>
@@ -98,19 +106,22 @@ export default function MainAssetsTable({ rows = [] }) {
             <TableCell>Location</TableCell>
             <TableCell>Assigned To</TableCell>
             <TableCell>Next Maintenance</TableCell>
+            <TableCell>Actions</TableCell>
           </TableRow>
         </TableHead>
 
         <TableBody>
           {paginatedRows.map((asset) => (
+            
             <TableRow key={asset.id}
             hover
+            onClick={() => handleOpen(asset)}
             sx={{
             '&:hover': {
             backgroundColor: 'action.hover',
-            cursor: 'pointer',
-        },
-      }}>
+            cursor: 'pointer',},
+          }}>
+  
               <TableCell>{asset.id}</TableCell>
               <TableCell>{asset.name}</TableCell>
               <TableCell>{asset.category}</TableCell>
@@ -119,6 +130,16 @@ export default function MainAssetsTable({ rows = [] }) {
               <TableCell>{asset.location}</TableCell>
               <TableCell>{asset.assignedTo}</TableCell>
               <TableCell>{asset.nextMaintenance}</TableCell>
+
+                {/* DELETE BUTTON */}
+              <TableCell onClick={(e) => e.stopPropagation()}>
+                <IconButton
+                  color="error"
+                  onClick={() => handleDelete(asset.id)}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -134,6 +155,9 @@ export default function MainAssetsTable({ rows = [] }) {
         onRowsPerPageChange={handleRowsPerPageChange}
         rowsPerPageOptions={[5, 10, 25]}
       />
+
+      {/* THIS RENDERS THE MODAL */}
+      <AssetDialog />
 
     </Paper>
   );
