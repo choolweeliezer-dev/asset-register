@@ -2,7 +2,7 @@ import React from "react";
 import { Grid } from "@mui/material";
 import { assetsMock } from "../../components/dashboard/data/assetsMock";
 
-import {SubscriptionCard} from "../../components/chartsCards/SubscriptionsCard"
+import { SubscriptionCard} from "../../components/chartsCards/SubscriptionsCard";
 import { MaintenanceCard } from "../../components/chartsCards/MaintenanceCard";
 import { InactiveCard } from "../../components/chartsCards/InactiveAssetsCard";
 import { AssetStatusChart } from "../../components/chartsCards/assetStatusChart";

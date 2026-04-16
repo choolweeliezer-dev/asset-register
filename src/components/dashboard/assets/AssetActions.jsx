@@ -9,30 +9,11 @@ import {
   Box
 } from "@mui/material";
 
-const STORAGE_KEY = "assets_data";
-
-export function useAssetActions(initialRows = []) {
-
-  // ✅ single source of truth
-  const [rows, setRows] = React.useState(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? JSON.parse(saved) : initialRows;
-  });
+export function useAssetActions(rows, setRows) {
 
   const [selectedAsset, setSelectedAsset] = React.useState(null);
   const [open, setOpen] = React.useState(false);
   const [editMode, setEditMode] = React.useState(false);
-
-  // ❌ REMOVE the bugged reset effect
-  // (THIS WAS BREAKING YOUR DELETE)
-  // React.useEffect(() => {
-  //   setRows(initialRows);
-  // }, [initialRows]);
-
-  // ✅ save to localStorage ONLY when rows change
-  React.useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(rows));
-  }, [rows]);
 
   // ================= OPEN =================
   const handleOpen = (asset) => {
@@ -63,15 +44,13 @@ export function useAssetActions(initialRows = []) {
       )
     );
 
-    setEditMode(false);
-    setOpen(false);
+    handleClose();
   };
 
-  // ================= DELETE (FIXED) =================
+  // ================= DELETE =================
   const handleDelete = (id) => {
     setRows((prev) => prev.filter((item) => item.id !== id));
 
-    // close modal if deleting open item
     if (selectedAsset?.id === id) {
       handleClose();
     }
@@ -94,25 +73,13 @@ export function useAssetActions(initialRows = []) {
               mt: 1,
             }}
           >
-            {/* ID */}
-            <TextField
-              label="ID"
-              value={selectedAsset.id}
-              disabled
-            />
+            <TextField label="ID" value={selectedAsset.id} disabled />
 
             <TextField
               label="Name"
               value={selectedAsset.name || ""}
               disabled={!editMode}
               onChange={(e) => handleEditChange("name", e.target.value)}
-            />
-
-            <TextField
-              label="Type"
-              value={selectedAsset.type || ""}
-              disabled={!editMode}
-              onChange={(e) => handleEditChange("type", e.target.value)}
             />
 
             <TextField
@@ -123,15 +90,6 @@ export function useAssetActions(initialRows = []) {
             />
 
             <TextField
-              label="Serial Number"
-              value={selectedAsset.serialNumber || ""}
-              disabled={!editMode}
-              onChange={(e) =>
-                handleEditChange("serialNumber", e.target.value)
-              }
-            />
-
-            <TextField
               label="Status"
               value={selectedAsset.status || ""}
               disabled={!editMode}
@@ -139,84 +97,17 @@ export function useAssetActions(initialRows = []) {
             />
 
             <TextField
-              label="IP Address"
-              value={selectedAsset.ipAddress || ""}
-              disabled={!editMode}
-              onChange={(e) =>
-                handleEditChange("ipAddress", e.target.value)
-              }
-            />
-
-            <TextField
               label="Location"
               value={selectedAsset.location || ""}
               disabled={!editMode}
-              onChange={(e) =>
-                handleEditChange("location", e.target.value)
-              }
+              onChange={(e) => handleEditChange("location", e.target.value)}
             />
 
             <TextField
               label="Assigned To"
               value={selectedAsset.assignedTo || ""}
               disabled={!editMode}
-              onChange={(e) =>
-                handleEditChange("assignedTo", e.target.value)
-              }
-            />
-
-            <TextField
-              label="Last Maintenance"
-              value={selectedAsset.lastMaintenance || ""}
-              disabled={!editMode}
-              onChange={(e) =>
-                handleEditChange("lastMaintenance", e.target.value)
-              }
-            />
-
-            <TextField
-              label="Next Maintenance"
-              value={selectedAsset.nextMaintenance || ""}
-              disabled={!editMode}
-              onChange={(e) =>
-                handleEditChange("nextMaintenance", e.target.value)
-              }
-            />
-
-            <TextField
-              label="Purchase Date"
-              value={selectedAsset.purchaseDate || ""}
-              disabled={!editMode}
-              onChange={(e) =>
-                handleEditChange("purchaseDate", e.target.value)
-              }
-            />
-
-            <TextField
-              label="Purchase Cost"
-              value={selectedAsset.purchaseCost || ""}
-              disabled={!editMode}
-              onChange={(e) =>
-                handleEditChange("purchaseCost", e.target.value)
-              }
-            />
-
-            <TextField
-              label="Insurance"
-              value={selectedAsset.insuranceCoverage || ""}
-              disabled={!editMode}
-              onChange={(e) =>
-                handleEditChange("insuranceCoverage", e.target.value)
-              }
-            />
-
-            <TextField
-              label="Warranty"
-              value={selectedAsset.warranty || ""}
-              disabled={!editMode}
-              onChange={(e) =>
-                handleEditChange("warranty", e.target.value)
-              }
+              onChange={(e) => handleEditChange("assignedTo", e.target.value)}
             />
           </Box>
         )}
@@ -244,11 +135,8 @@ export function useAssetActions(initialRows = []) {
   );
 
   return {
-    rows,
     handleOpen,
     handleDelete,
-    handleSave,
-    handleEditChange,
     AssetDialog,
   };
 }

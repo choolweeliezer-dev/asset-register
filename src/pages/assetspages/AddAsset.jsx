@@ -91,6 +91,7 @@ export default function AddAsset() {
             >
               <MenuItem value="main">Main Asset</MenuItem>
               <MenuItem value="it">IT Asset</MenuItem>
+              <MenuItem value="sub">Subscription</MenuItem>
             </Field>
           </Box>
 

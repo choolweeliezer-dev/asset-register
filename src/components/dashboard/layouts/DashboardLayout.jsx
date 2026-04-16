@@ -1,39 +1,53 @@
 import * as React from 'react';
-import { Box } from '@mui/material';
+import { Box, useTheme, useMediaQuery, Drawer } from '@mui/material';
 
 import SideNav from './SideNav';
 import TopNav from './TopNav';
 
 export default function DashboardLayout({ children }) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+  const [open, setOpen] = React.useState(false);
+
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
 
-      {/* SIDEBAR */}
-      <SideNav />
+      {/* TOP NAV (pass toggle for mobile menu button later) */}
+      <TopNav onMenuClick={() => setOpen(true)} />
 
-      {/* RIGHT SIDE */}
-      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+      {/* MAIN AREA */}
+      <Box sx={{ display: 'flex', flex: 1 }}>
 
-        {/* TOP BAR */}
-        <TopNav />
+        {/* DESKTOP SIDEBAR */}
+        {!isMobile && (
+          <Box sx={{ width: 260, flexShrink: 0 }}>
+            <SideNav />
+          </Box>
+        )}
 
-        {/* PAGE CONTENT AREA */}
+        {/* MOBILE SIDEBAR (DRAWER) */}
+        <Drawer
+          open={open}
+          onClose={() => setOpen(false)}
+          variant="temporary"
+        >
+          <SideNav />
+        </Drawer>
+
+        {/* CONTENT AREA */}
         <Box
           sx={{
             flex: 1,
-            p: 2,
             backgroundColor: '#f9fafb',
-
-            // ✅ THIS is the fix
             display: 'flex',
-            justifyContent: 'center',
+            flexDirection: 'column',
+            minWidth: 0, // IMPORTANT: prevents overflow issues
           }}
         >
-          {/* CENTERED CONTENT WRAPPER */}
-          <Box sx={{ width: '100%', maxWidth: '1400px' }}>
+          <Box sx={{ width: '100%', maxWidth: '1400px', mx: 'auto', p: 2 }}>
             {children}
           </Box>
-
         </Box>
 
       </Box>

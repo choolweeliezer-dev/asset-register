@@ -1,17 +1,27 @@
 import * as React from "react";
 import {
-  Table, TableBody, TableCell, TableHead,
-  TableRow, Paper, TablePagination,
-  TextField, MenuItem, Box,
-  Drawer, Typography, Divider, Button, IconButton
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Paper,
+  TablePagination,
+  TextField,
+  MenuItem,
+  Box,
+  Drawer,
+  Typography,
+  Divider,
+  Button,
+  IconButton,
 } from "@mui/material";
 
 export default function NewAssetsTable({
   rows = [],
   onDelete,
-  onUpdate
+  onUpdate,
 }) {
-
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
@@ -23,9 +33,9 @@ export default function NewAssetsTable({
   const [selectedAsset, setSelectedAsset] = React.useState(null);
   const [editMode, setEditMode] = React.useState(false);
 
-  // ================= OPEN DRAWER =================
+  // ================= OPEN =================
   const handleOpen = (asset) => {
-    setSelectedAsset({ ...asset }); // clone to avoid direct mutation
+    setSelectedAsset({ ...asset });
     setOpen(true);
     setEditMode(false);
   };
@@ -36,7 +46,7 @@ export default function NewAssetsTable({
     setEditMode(false);
   };
 
-  // ================= EDIT HANDLER =================
+  // ================= EDIT =================
   const handleChange = (field, value) => {
     setSelectedAsset((prev) => ({
       ...prev,
@@ -48,24 +58,22 @@ export default function NewAssetsTable({
   const handleSave = () => {
     if (onUpdate && selectedAsset) {
       onUpdate(selectedAsset);
+      
     }
     setEditMode(false);
     setOpen(false);
   };
 
   // ================= DELETE =================
-  const handleDeleteClick = (id) => {
-    if (onDelete) {
-      onDelete(id);
-    }
+  const handleDelete = (id) => {
+    onDelete?.(id);
 
-    // close drawer if deleting current item
     if (selectedAsset?.id === id) {
       handleClose();
     }
   };
 
-  // ================= FILTERING =================
+  // ================= FILTERS =================
   const filteredRows = rows.filter((row) => {
     const matchesSearch =
       row.name?.toLowerCase().includes(search.toLowerCase()) ||
@@ -81,7 +89,6 @@ export default function NewAssetsTable({
     return matchesSearch && matchesStatus && matchesCategory;
   });
 
-  // ================= PAGINATION =================
   const paginatedRows = filteredRows.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
@@ -92,7 +99,6 @@ export default function NewAssetsTable({
 
       {/* ================= FILTER BAR ================= */}
       <Box sx={{ display: "flex", gap: 2, mb: 2 }}>
-
         <TextField
           size="small"
           label="Search"
@@ -128,12 +134,10 @@ export default function NewAssetsTable({
           <MenuItem value="Desktop">Desktop</MenuItem>
           <MenuItem value="Server">Server</MenuItem>
         </TextField>
-
       </Box>
 
       {/* ================= TABLE ================= */}
       <Table>
-
         <TableHead>
           <TableRow>
             <TableCell>ID</TableCell>
@@ -151,12 +155,8 @@ export default function NewAssetsTable({
               key={asset.id}
               hover
               onClick={() => handleOpen(asset)}
-              sx={{
-                cursor: "pointer",
-                "&:hover": { backgroundColor: "action.hover" }
-              }}
+              sx={{ cursor: "pointer" }}
             >
-
               <TableCell>{asset.id}</TableCell>
               <TableCell>{asset.name}</TableCell>
               <TableCell>{asset.category}</TableCell>
@@ -166,16 +166,14 @@ export default function NewAssetsTable({
               <TableCell onClick={(e) => e.stopPropagation()}>
                 <IconButton
                   color="error"
-                  onClick={() => handleDeleteClick(asset.id)}
+                  onClick={() => handleDelete(asset.id)}
                 >
                   🗑
                 </IconButton>
               </TableCell>
-
             </TableRow>
           ))}
         </TableBody>
-
       </Table>
 
       {/* ================= PAGINATION ================= */}
@@ -198,16 +196,14 @@ export default function NewAssetsTable({
         onClose={handleClose}
         PaperProps={{ sx: { width: 500, p: 2 } }}
       >
-
-        <Typography variant="h6" sx={{ mb: 2 }}>
+        <Typography variant="h6">
           {editMode ? "Edit Asset" : "Asset Details"}
         </Typography>
 
-        <Divider sx={{ mb: 2 }} />
+        <Divider sx={{ my: 2 }} />
 
         {selectedAsset && (
           <Box sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}>
-
             <TextField label="ID" value={selectedAsset.id} disabled />
 
             <TextField
@@ -221,7 +217,7 @@ export default function NewAssetsTable({
               label="Type"
               value={selectedAsset.type || ""}
               disabled={!editMode}
-              onChange={(e) => handleChange("type", e.target.value)}
+              onChange={(e) => handleChange("Type", e.target.value)}
             />
 
             <TextField
@@ -232,10 +228,10 @@ export default function NewAssetsTable({
             />
 
             <TextField
-              label="Serial No"
+              label="Serial Number"
               value={selectedAsset.serialNumber || ""}
               disabled={!editMode}
-              onChange={(e) => handleChange("serialNumber", e.target.value)}
+              onChange={(e) => handleChange("Serial Number", e.target.value)}
             />
 
             <TextField
@@ -243,13 +239,6 @@ export default function NewAssetsTable({
               value={selectedAsset.status || ""}
               disabled={!editMode}
               onChange={(e) => handleChange("status", e.target.value)}
-            />
-
-            <TextField
-              label="IP Address"
-              value={selectedAsset.ipAddress || ""}
-              disabled={!editMode}
-              onChange={(e) => handleChange("ipAddress", e.target.value)}
             />
 
             <TextField
@@ -263,87 +252,44 @@ export default function NewAssetsTable({
               label="Assigned To"
               value={selectedAsset.assignedTo || ""}
               disabled={!editMode}
-              onChange={(e) => handleChange("assignedTo", e.target.value)}
-            />
-
-            <TextField
-              label="Last Maintenance"
-              value={selectedAsset.lastMaintenance || ""}
-              disabled={!editMode}
-              onChange={(e) => handleChange("lastMaintenance", e.target.value)}
-            />
-
-            <TextField
-              label="Next Maintenance"
-              value={selectedAsset.nextMaintenance || ""}
-              disabled={!editMode}
-              onChange={(e) => handleChange("nextMaintenance", e.target.value)}
+              onChange={(e) => handleChange("Assigned To", e.target.value)}
             />
 
             <TextField
               label="Purchase Date"
               value={selectedAsset.purchaseDate || ""}
               disabled={!editMode}
-              onChange={(e) => handleChange("purchaseDate", e.target.value)}
+              onChange={(e) => handleChange("Purchase Date", e.target.value)}
             />
 
             <TextField
-              label="Purchase Cost"
-              value={selectedAsset.purchaseCost || ""}
+              label="Next Maintenance"
+              value={selectedAsset.nextMaintenance || ""}
               disabled={!editMode}
-              onChange={(e) => handleChange("purchaseCost", e.target.value)}
+              onChange={(e) => handleChange("name", e.target.value)}
             />
-
-            <TextField
-              label="Insurance"
-              value={selectedAsset.insuranceCoverage || ""}
-              disabled={!editMode}
-              onChange={(e) => handleChange("insuranceCoverage", e.target.value)}
-            />
-
-            <TextField
-              label="Warranty"
-              value={selectedAsset.warranty || ""}
-              disabled={!editMode}
-              onChange={(e) => handleChange("warranty", e.target.value)}
-            />
-
           </Box>
         )}
 
-        {/* ================= ACTIONS ================= */}
         <Box sx={{ display: "flex", gap: 2, mt: 3 }}>
-
           {!editMode ? (
             <>
-              <Button variant="contained" onClick={() => setEditMode(true)}>
-                Edit
-              </Button>
-
-              <Button color="error" onClick={() => handleDeleteClick(selectedAsset.id)}>
+              <Button onClick={() => setEditMode(true)}>Edit</Button>
+              <Button color="error" onClick={() => handleDelete(selectedAsset.id)}>
                 Delete
               </Button>
-
-              <Button onClick={handleClose}>
-                Close
-              </Button>
+              <Button onClick={handleClose}>Close</Button>
             </>
           ) : (
             <>
               <Button variant="contained" onClick={handleSave}>
                 Save
               </Button>
-
-              <Button onClick={() => setEditMode(false)}>
-                Cancel
-              </Button>
+              <Button onClick={() => setEditMode(false)}>Cancel</Button>
             </>
           )}
-
         </Box>
-
       </Drawer>
-
     </Paper>
   );
 }

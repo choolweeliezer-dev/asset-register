@@ -1,5 +1,7 @@
 import { Card, CardContent, Typography, Box, Grid } from "@mui/material";
 import WarningIcon from '@mui/icons-material/Warning';
+import Button from "@mui/material/Button";
+import { Link } from "react-router-dom";
 
 export function InactiveCard({ inactiveWeek, inactiveMonth, inactiveYear }) {
   return (
@@ -13,6 +15,13 @@ export function InactiveCard({ inactiveWeek, inactiveMonth, inactiveYear }) {
             <Typography color="error">Week: {inactiveWeek.length}</Typography>
             <Typography color="warning.main">Month: {inactiveMonth.length}</Typography>
             <Typography color="success.main">Year: {inactiveYear.length}</Typography>
+            <Button 
+             size="small"
+             component={Link}
+             to = ""
+            >
+              View All →
+            </Button>
           </Box>
 
           <Box sx={{

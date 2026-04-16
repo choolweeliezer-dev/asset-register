@@ -1,8 +1,12 @@
 import { Card, CardContent, Typography, Box, Grid } from "@mui/material";
 import PaymentsIcon from '@mui/icons-material/Payments';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import { Link } from "react-router-dom";
+import Button from "@mui/material/Button";
+import { useNavigate } from "react-router-dom";
 
 export function SubscriptionCard({ subWeek, subMonth, subYear }) {
+  const navigate = useNavigate();
   return (
     <Grid item xs={12} sm={6} lg={4}>
       <Card sx={{ height: '100%' }}>
@@ -14,7 +18,15 @@ export function SubscriptionCard({ subWeek, subMonth, subYear }) {
             <Typography>Week: {subWeek.length}</Typography>
             <Typography>Month: {subMonth.length}</Typography>
             <Typography>Year: {subYear.length}</Typography>
-          </Box>
+            <Button 
+             size="small"
+             component={Link}
+             to = "/pages/subscriptions/subsTable"
+            >
+              View Subscriptions →
+            </Button>
+          
+        </Box>
 
           <Box sx={{
             width: 80,

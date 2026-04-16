@@ -16,6 +16,7 @@ import { assetsMock } from '../../components/dashboard/data/assetsMock';
 export default function Subscriptions() {
   const [filter, setFilter] = React.useState('all');
   const [hovered, setHovered] = React.useState(null);
+  const [selected, setSelected] = React.useState([]);
 
   const subscriptionAssets = assetsMock.filter(
     (asset) => asset.subscriptionType
@@ -32,11 +33,38 @@ export default function Subscriptions() {
     return end > today ? 'success' : 'error';
   };
 
+  // ✅ toggle select
+  const toggleSelect = (id) => {
+    setSelected((prev) =>
+      prev.includes(id)
+        ? prev.filter((item) => item !== id)
+        : [...prev, id]
+    );
+  };
+
+  // ✅ delete selected
+  const deleteSelected = () => {
+    setSelected([]);
+  };
+
   return (
     <Box>
-      <Typography variant="h5" sx={{ mb: 2 }}>
-        Subscriptions
-      </Typography>
+
+      {/* HEADER + DELETE ACTION */}
+      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+        <Typography variant="h5">
+          Subscriptions
+        </Typography>
+
+        {selected.length > 0 && (
+          <Chip
+            label={`Delete Selected (${selected.length})`}
+            color="error"
+            clickable
+            onClick={deleteSelected}
+          />
+        )}
+      </Stack>
 
       {/* FILTER */}
       <ToggleButtonGroup
@@ -55,13 +83,22 @@ export default function Subscriptions() {
         {filtered.map((asset) => (
           <Grid item xs={12} sm={6} md={4} key={asset.id}>
             <Card
+              onClick={() => toggleSelect(asset.id)}
               onMouseEnter={() => setHovered(asset.id)}
               onMouseLeave={() => setHovered(null)}
               sx={{
                 transition: '0.3s',
-                transform:
-                  hovered === asset.id ? 'scale(1.02)' : 'scale(1)',
                 cursor: 'pointer',
+
+                transform: selected.includes(asset.id)
+                  ? 'scale(1.03)'
+                  : hovered === asset.id
+                  ? 'scale(1.02)'
+                  : 'scale(1)',
+
+                border: selected.includes(asset.id)
+                  ? '2px solid #f44336'
+                  : '1px solid transparent',
               }}
             >
               <CardContent>
@@ -72,7 +109,6 @@ export default function Subscriptions() {
                     {asset.name}
                   </Typography>
 
-                  {/* STATUS */}
                   <Chip
                     label={
                       new Date(asset.subscriptionEndDate) > new Date()
@@ -84,7 +120,7 @@ export default function Subscriptions() {
                   />
                 </Stack>
 
-                {/* GENERAL INFO (ALWAYS VISIBLE) */}
+                {/* GENERAL INFO */}
                 <Typography variant="body2">
                   ID: {asset.id}
                 </Typography>
@@ -97,7 +133,17 @@ export default function Subscriptions() {
                   Cost: {asset.subscriptionCost}
                 </Typography>
 
-                {/* HOVER DETAILS */}
+                {/* SELECTED LABEL */}
+                {selected.includes(asset.id) && (
+                  <Chip
+                    label="Selected"
+                    size="small"
+                    color="error"
+                    sx={{ mt: 1 }}
+                  />
+                )}
+
+                {/* HOVER DETAILS (UNCHANGED) */}
                 {hovered === asset.id && (
                   <Box
                     sx={{
@@ -129,7 +175,7 @@ export default function Subscriptions() {
                         cursor: 'pointer',
                       }}
                     >
-                      Click any field to edit →
+                      Click to make payment →
                     </Typography>
                   </Box>
                 )}

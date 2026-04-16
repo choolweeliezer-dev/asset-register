@@ -17,15 +17,15 @@ import { useNavigate } from "react-router-dom";
 
 import { assetsMock } from "../dashboard/data/assetsMock";
 import { Link } from "react-router-dom";
-import ItAssets from "../../pages/assets/ItAssets";
-import MainAssets from "../../pages/assets/MainAssets";
+import ItAssets from "../../pages/assetspages/ItAssets";
+import MainAssets from "../../pages/assetspages/MainAssets";
 
 export function AssetPreview() {
   const navigate = useNavigate();
 
   // MAIN ASSETS (first 5 non-IT assets)
   const mainAssets = assetsMock
-  .filter(asset => !asset.id.startsWith("IT"))
+  .filter(asset => asset.id.startsWith("A"))
   .slice(0, 5);
 
   // IT ASSETS (first 5 IT assets)

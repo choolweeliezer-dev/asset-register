@@ -1,17 +1,20 @@
 import * as React from 'react';
-import {Table,TableBody,TableCell,TableHead,TableRow,
-  Paper,TablePagination,TextField,MenuItem,Box, IconButton, Tooltip
+import {
+  Table, TableBody, TableCell, TableHead, TableRow,
+  Paper, TablePagination, TextField, MenuItem, Box, IconButton
 } from '@mui/material';
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useAssetActions } from './AssetActions';
 
 export default function MainAssetsTable({ rows = [] }) {
+
   const {
     rows: updatedRows,
     handleOpen,
     handleDelete,
     AssetDialog
   } = useAssetActions(rows);
+
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
@@ -19,36 +22,37 @@ export default function MainAssetsTable({ rows = [] }) {
   const [statusFilter, setStatusFilter] = React.useState('all');
   const [categoryFilter, setCategoryFilter] = React.useState('all');
 
-  // ================= FILTERING =================
-  const filteredRows = updatedRows.filter((row) => {
-    const matchesSearch =
-      row.name?.toLowerCase().includes(search.toLowerCase()) ||
-      row.location?.toLowerCase().includes(search.toLowerCase()) ||
-      row.assignedTo?.toLowerCase().includes(search.toLowerCase());
+  // ================= CLEAN FILTER PIPELINE =================
+  const filteredRows = React.useMemo(() => {
+    return updatedRows.filter((row) => {
 
-    const matchesStatus =
-      statusFilter === 'all' || row.status === statusFilter;
+      const matchesSearch =
+        row.name?.toLowerCase().includes(search.toLowerCase()) ||
+        row.location?.toLowerCase().includes(search.toLowerCase()) ||
+        row.assignedTo?.toLowerCase().includes(search.toLowerCase());
 
-    const matchesCategory =
-      categoryFilter === 'all' || row.category === categoryFilter;
+      const matchesStatus =
+        statusFilter === 'all' || row.status === statusFilter;
 
-    return matchesSearch && matchesStatus && matchesCategory;
-  });
+      const matchesCategory =
+        categoryFilter === 'all' || row.category === categoryFilter;
+
+      return matchesSearch && matchesStatus && matchesCategory;
+    });
+  }, [updatedRows, search, statusFilter, categoryFilter]);
 
   // ================= PAGINATION =================
-  const paginatedRows = filteredRows.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
+  const paginatedRows = React.useMemo(() => {
+    return filteredRows.slice(
+      page * rowsPerPage,
+      page * rowsPerPage + rowsPerPage
+    );
+  }, [filteredRows, page, rowsPerPage]);
 
-  const handlePageChange = (event, newPage) => {
-    setPage(newPage);
-  };
-
-  const handleRowsPerPageChange = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
+  // ================= RESET PAGE ON FILTER =================
+  React.useEffect(() => {
     setPage(0);
-  }; 
+  }, [search, statusFilter, categoryFilter]);
 
   return (
     <Paper sx={{ p: 2, overflowX: 'auto' }}>
@@ -61,7 +65,7 @@ export default function MainAssetsTable({ rows = [] }) {
           label="Search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          sx={{width: 500}}
+          sx={{ width: 500 }}
         />
 
         <TextField
@@ -70,7 +74,7 @@ export default function MainAssetsTable({ rows = [] }) {
           label="Status"
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          sx={{width: 220}}
+          sx={{ minWidth: 220 }}
         >
           <MenuItem value="all">All</MenuItem>
           <MenuItem value="Active">Active</MenuItem>
@@ -84,11 +88,11 @@ export default function MainAssetsTable({ rows = [] }) {
           label="Category"
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
-          sx={{width: 220}}
+          sx={{ minwidth: 500 }}
         >
           <MenuItem value="all">All</MenuItem>
-          <MenuItem value="Building">Building</MenuItem>
           <MenuItem value="Furniture">Furniture</MenuItem>
+          <MenuItem value="Equipment">Equipment</MenuItem>
           <MenuItem value="Vehicle">Vehicle</MenuItem>
         </TextField>
 
@@ -112,16 +116,17 @@ export default function MainAssetsTable({ rows = [] }) {
 
         <TableBody>
           {paginatedRows.map((asset) => (
-            
-            <TableRow key={asset.id}
-            hover
-            onClick={() => handleOpen(asset)}
-            sx={{
-            '&:hover': {
-            backgroundColor: 'action.hover',
-            cursor: 'pointer',},
-          }}>
-  
+            <TableRow
+              key={asset.id}
+              hover
+              onClick={() => handleOpen(asset)}
+              sx={{
+                '&:hover': {
+                  backgroundColor: 'action.hover',
+                  cursor: 'pointer',
+                },
+              }}
+            >
               <TableCell>{asset.id}</TableCell>
               <TableCell>{asset.name}</TableCell>
               <TableCell>{asset.category}</TableCell>
@@ -131,7 +136,6 @@ export default function MainAssetsTable({ rows = [] }) {
               <TableCell>{asset.assignedTo}</TableCell>
               <TableCell>{asset.nextMaintenance}</TableCell>
 
-                {/* DELETE BUTTON */}
               <TableCell onClick={(e) => e.stopPropagation()}>
                 <IconButton
                   color="error"
@@ -140,6 +144,7 @@ export default function MainAssetsTable({ rows = [] }) {
                   <DeleteIcon />
                 </IconButton>
               </TableCell>
+
             </TableRow>
           ))}
         </TableBody>
@@ -150,13 +155,16 @@ export default function MainAssetsTable({ rows = [] }) {
         component="div"
         count={filteredRows.length}
         page={page}
-        onPageChange={handlePageChange}
+        onPageChange={(e, p) => setPage(p)}
         rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={handleRowsPerPageChange}
+        onRowsPerPageChange={(e) => {
+          setRowsPerPage(parseInt(e.target.value, 10));
+          setPage(0);
+        }}
         rowsPerPageOptions={[5, 10, 25]}
       />
 
-      {/* THIS RENDERS THE MODAL */}
+      {/* ================= POPUP DIALOG ================= */}
       <AssetDialog />
 
     </Paper>

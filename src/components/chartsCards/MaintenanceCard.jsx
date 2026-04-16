@@ -1,5 +1,7 @@
 import { Card, CardContent, Typography, Box, Grid } from "@mui/material";
 import BuildIcon from '@mui/icons-material/Build';
+import Button from "@mui/material/Button";
+import { Link } from "react-router-dom";
 
 export function MaintenanceCard({ maintWeek, maintMonth, maintYear }) {
   return (
@@ -13,6 +15,13 @@ export function MaintenanceCard({ maintWeek, maintMonth, maintYear }) {
             <Typography color="error">Week: {maintWeek.length}</Typography>
             <Typography color="warning.main">Month: {maintMonth.length}</Typography>
             <Typography color="success.main">Year: {maintYear.length}</Typography>
+            <Button 
+             size="small"
+             component={Link}
+             to = ""
+            >
+              View full history →
+            </Button>
           </Box>
 
           <Box sx={{
