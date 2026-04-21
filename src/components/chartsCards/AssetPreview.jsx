@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React from "react";
 import {
   Grid,
@@ -13,15 +14,15 @@ import {
   Button,
   Chip,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
 
 import { assetsMock } from "../dashboard/data/assetsMock";
 import { Link } from "react-router-dom";
-import ItAssets from "../../pages/assetspages/ItAssets";
-import MainAssets from "../../pages/assetspages/MainAssets";
+//import ItAssets from "../../pages/assetspages/ItAssets";
+//import MainAssets from "../../pages/assetspages/MainAssets";
 
 export function AssetPreview() {
-  const navigate = useNavigate();
+ // const navigate = useNavigate();
 
   // MAIN ASSETS (first 5 non-IT assets)
   const mainAssets = assetsMock

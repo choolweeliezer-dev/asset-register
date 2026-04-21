@@ -12,9 +12,10 @@ export function MaintenanceCard({ maintWeek, maintMonth, maintYear }) {
           <Box>
             <Typography variant="overline">Maintenance</Typography>
             <Typography variant="h5">Upcoming Service</Typography>
-            <Typography color="error">Week: {maintWeek.length}</Typography>
-            <Typography color="warning.main">Month: {maintMonth.length}</Typography>
-            <Typography color="success.main">Year: {maintYear.length}</Typography>
+            <Typography color="error"> {maintWeek.length}</Typography>
+            <Typography color="warning.main">Call for maintenance</Typography>
+           {/*} <Typography color="warning.main">Month: {maintMonth.length}</Typography>
+            <Typography color="success.main">Year: {maintYear.length}</Typography> */}
             <Button 
              size="small"
              component={Link}
@@ -31,10 +32,10 @@ export function MaintenanceCard({ maintWeek, maintMonth, maintYear }) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: '#fff3e0',
+            background: 'linear-gradient(180deg,  #d1612eca, #f3661b)',
             ml: 4,
           }}>
-            <BuildIcon sx={{ fontSize: 40, color: '#ed6c02' }} />
+            <BuildIcon sx={{ fontSize: 40, color: '#f7f4f2' }} />
           </Box>
 
         </CardContent>

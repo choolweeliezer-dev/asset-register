@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { Box, useTheme, useMediaQuery, Drawer } from '@mui/material';
+import { Outlet } from 'react-router-dom';
+import Footer from './Footer';
 
 import SideNav from './SideNav';
 import TopNav from './TopNav';
@@ -11,7 +13,7 @@ export default function DashboardLayout({ children }) {
   const [open, setOpen] = React.useState(false);
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: "background.default" }}>
 
       {/* TOP NAV (pass toggle for mobile menu button later) */}
       <TopNav onMenuClick={() => setOpen(true)} />
@@ -39,15 +41,20 @@ export default function DashboardLayout({ children }) {
         <Box
           sx={{
             flex: 1,
-            backgroundColor: '#f9fafb',
+            backgroundColor: 'background.default',
             display: 'flex',
             flexDirection: 'column',
-            minWidth: 0, // IMPORTANT: prevents overflow issues
+            minWidth: 0, 
+            pb: 10,
           }}
         >
           <Box sx={{ width: '100%', maxWidth: '1400px', mx: 'auto', p: 2 }}>
             {children}
           </Box>
+           <main>
+        <Outlet />
+      </main>
+          <Footer/>
         </Box>
 
       </Box>

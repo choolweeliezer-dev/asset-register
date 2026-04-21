@@ -279,10 +279,22 @@ export default function MainAssets() {
                   }
                 />
                 <TextField
+                  label="Serial Number"
+                  value={editedAsset.serialNumber}
+                  disabled
+                />
+                <TextField
                   label="Category"
                   value={editedAsset.category}
                   onChange={(e) =>
                     setEditedAsset({ ...editedAsset, category: e.target.value })
+                  }
+                />
+                <TextField
+                  label="Status"
+                  value={editedAsset.status}
+                  onChange={(e) =>
+                    setEditedAsset({ ...editedAsset, status: e.target.value })
                   }
                 />
                 <TextField
@@ -297,6 +309,25 @@ export default function MainAssets() {
                   value={editedAsset.assignedTo}
                   onChange={(e) =>
                     setEditedAsset({ ...editedAsset, assignedTo: e.target.value })
+                  }
+                />
+                 <TextField
+                  label="Last Maintenance"
+                  value={editedAsset.lastMaintenance}
+                  disabled
+                />
+                <TextField
+                  label="Next Maintenance"
+                  value={editedAsset.nextMaintenance}
+                  onChange={(e) =>
+                    setEditedAsset({ ...editedAsset, nextMaintenance: e.target.value })
+                  }
+                />
+                <TextField
+                  label="Insurance Coverage"
+                  value={editedAsset.insuranceCoverage}
+                  onChange={(e) =>
+                    setEditedAsset({ ...editedAsset, insuranceCoverage: e.target.value })
                   }
                 />
               </Box>

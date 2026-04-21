@@ -8,7 +8,7 @@ import { InactiveCard } from "../../components/chartsCards/InactiveAssetsCard";
 import { AssetStatusChart } from "../../components/chartsCards/assetStatusChart";
 import {AssetPreview} from "../../components/chartsCards/AssetPreview";
 import { MaintenanceTrendChart } from "../../components/chartsCards/MaintenanceTrendChart";
-import { maintenanceMock } from "../../components/dashboard/data/maintenanceMock";
+import { maintenanceHis } from "../../components/dashboard/data/maintenanceMock";
 
 export default function FeaturedInfo() {
 
@@ -94,8 +94,8 @@ export default function FeaturedInfo() {
       {/**Left: Trend*/}
       <Grid item xs={12} md={8}>
         <MaintenanceTrendChart
-          categories={maintenanceMock.categories}
-          data={maintenanceMock.data}
+          categories={maintenanceHis.categories}
+          data={maintenanceHis.data}
         />
       </Grid>
 

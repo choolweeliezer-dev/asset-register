@@ -15,9 +15,10 @@ export function SubscriptionCard({ subWeek, subMonth, subYear }) {
           <Box>
             <Typography variant="overline">Subscriptions Due</Typography>
             <Typography variant="h5">Upcoming Payments</Typography>
-            <Typography>Week: {subWeek.length}</Typography>
-            <Typography>Month: {subMonth.length}</Typography>
-            <Typography>Year: {subYear.length}</Typography>
+            <Typography color="error"> {subWeek.length}</Typography>
+            <Typography color="warning.main">These have to be paid</Typography>
+          {/*}  <Typography>Month: {subMonth.length}</Typography>
+            <Typography>Year: {subYear.length}</Typography> */}
             <Button 
              size="small"
              component={Link}
@@ -35,10 +36,10 @@ export function SubscriptionCard({ subWeek, subMonth, subYear }) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: '#e3f2fd',
+            background: 'linear-gradient(180deg, #67936f, #1aaf44)',
             ml: 4,
           }}>
-            <AttachMoneyIcon sx={{ fontSize: 40, color: '#1976d2' }} />
+            <AttachMoneyIcon sx={{ fontSize: 40, color: '#f9f9f9' }} />
           </Box>
 
         </CardContent>

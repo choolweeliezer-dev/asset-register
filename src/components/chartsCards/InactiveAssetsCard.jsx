@@ -10,11 +10,12 @@ export function InactiveCard({ inactiveWeek, inactiveMonth, inactiveYear }) {
         <CardContent sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
 
           <Box>
-            <Typography variant="overline">Inactive Assets</Typography>
-            <Typography variant="h5">Not Recently Active</Typography>
-            <Typography color="error">Week: {inactiveWeek.length}</Typography>
-            <Typography color="warning.main">Month: {inactiveMonth.length}</Typography>
-            <Typography color="success.main">Year: {inactiveYear.length}</Typography>
+            <Typography variant="overline">Inactive Assets</Typography> 
+            <Typography variant="h5">Not Recently Active</Typography> 
+            <Typography color="error">{inactiveWeek.length}</Typography>
+            <Typography color="warning.main">this device hasn't been active all week</Typography>
+           {/**  <Typography color="warning.main">Month: {inactiveMonth.length}</Typography>
+            <Typography color="success.main">Year: {inactiveYear.length}</Typography> */}
             <Button 
              size="small"
              component={Link}
@@ -31,10 +32,10 @@ export function InactiveCard({ inactiveWeek, inactiveMonth, inactiveYear }) {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            backgroundColor: '#ffebee',
+            background: 'linear-gradient(180deg,  #f81818e1, #f3311bdb)',
             ml: 4,
           }}>
-            <WarningIcon sx={{ fontSize: 40, color: '#d32f2f' }} />
+            <WarningIcon sx={{ fontSize: 40, color: '#ffffff' }} />
           </Box>
 
         </CardContent>

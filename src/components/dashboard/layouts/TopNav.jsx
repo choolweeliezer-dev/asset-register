@@ -6,13 +6,18 @@ import Tooltip from '@mui/material/Tooltip';
 import Badge from '@mui/material/Badge';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LightModeIcon from "@mui/icons-material/LightMode";
 
 import { BellIcon } from '@phosphor-icons/react/dist/ssr/Bell';
 import { MagnifyingGlassIcon } from '@phosphor-icons/react/dist/ssr/MagnifyingGlass';
 import { UsersIcon } from '@phosphor-icons/react/dist/ssr/Users';
 import MenuIcon from '@mui/icons-material/Menu';
+import { useThemeContext } from '../../../ThemeContext';
 
 export default function TopNav({ onMenuClick }) {
+  
+  const {mode, toggleDarkMode} = useThemeContext();
   return (
     <Box
       sx={{
@@ -23,7 +28,7 @@ export default function TopNav({ onMenuClick }) {
         py: 1,
         background: 'linear-gradient(90deg, #0f172a, #3b82f6, #a855f7)',
         backdropFilter: 'blur(10px)',
-        borderRadius: 2,
+        borderRadius: 0,
         boxShadow: 1,
       }}
     >
@@ -89,6 +94,11 @@ export default function TopNav({ onMenuClick }) {
             </Badge>
           </IconButton>
         </Tooltip>
+        <Box>
+          <IconButton color="inherit" onClick={toggleDarkMode}>
+            {mode === "dark" ? <LightModeIcon /> : <DarkModeIcon />}
+          </IconButton>
+        </Box>
 
         <Avatar
           src="/assets/avatar.png"

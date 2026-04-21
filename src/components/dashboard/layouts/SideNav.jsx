@@ -20,14 +20,14 @@ import { MoneyIcon, TrendUpIcon } from '@phosphor-icons/react';
 
 /* ================= NAV ITEMS ================= */
 const navItems = [
-  { title: 'Dashboard', path: '/', icon: <DashboardIcon />, section: 'main', active: 'true' },
+  { title: 'Dashboard', path: '/assetspages/dash', icon: <DashboardIcon />, section: 'main', active: 'true' },
   { title: 'Main Assets', path: '/assetspages/main', icon: <Inventory2Icon />, section: 'main', active: 'true' },
   { title: 'IT Assets', path: '/assetspages/it', icon: <ComputerIcon />, section: 'main', active: 'true' },
 
   { title: 'Asset Details', path: '/assetspages/details', icon: <InfoIcon />, section: 'maintenance', active: 'true' },
-  { title: 'Maintenance History', path: '/assetspages/trend', icon: <TrendUpIcon />, section: 'maintenance', active: 'false' },
+  { title: 'Maintenance History', path: 'assetspages/pages/maintenance/his', icon: <TrendUpIcon />, section: 'maintenance', active: 'false' },
 
-  { title: 'Subscriptions', path: '/assetspages/subs', icon: <SubscriptionsIcon />, section: 'subscriptions', active: 'true' },
+  { title: 'Subscriptions', path: '/pages/subscriptions/subs', icon: <SubscriptionsIcon />, section: 'subscriptions', active: 'true' },
   { title: 'Subscription Table', path: '/pages/subscriptions/subsTable', icon: <MoneyIcon />, section: 'subscriptions', active: 'true' },
 ];
 
