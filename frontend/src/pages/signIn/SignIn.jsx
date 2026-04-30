@@ -6,21 +6,60 @@ import {
   TextField,
   Typography,
   Button,
-  Link
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
+import { loginUser } from "../../api/authApi";
+import { useState } from "react";
+
 export default function SignIn() {
- const [isAdmin, setIsAdmin] = React.useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [error, setError] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
 
-    console.log(isAdmin ? "Admin login" : "User login");
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  setError("");
+  setLoading(true);
+
+  try {
+    const response = await loginUser({
+      email: email.trim(),
+      password,
+    });
+
+    console.log("LOGIN RESPONSE:", response.data);
+
+    const data = response.data;
+
+    if (!data.token) {
+      setError("Login failed: no token received");
+      return;
+    }
+
+    localStorage.setItem("token", data.token);
+
+    if (data.userId) {
+      localStorage.setItem("userId", data.userId);
+    }
+
+    if (data.name) {
+      localStorage.setItem("name", data.name);
+    }
 
     navigate("/assetspages/dash");
-  };
+
+  } catch (err) {
+    console.error(err);
+    setError("Invalid email or password");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <Box
@@ -31,8 +70,6 @@ export default function SignIn() {
         bgcolor: "background.default",
       }}
     >
-
-      {/* CENTERED LOGIN */}
       <Box
         sx={{
           flex: 1,
@@ -51,24 +88,22 @@ export default function SignIn() {
           }}
         >
           <CardContent sx={{ p: 4 }}>
-            
-            {/* TITLE *
             <Typography variant="h5" gutterBottom>
-              {isAdmin ? "Admin Sign In" : "Sign In"}
-            </Typography> */}
+              Sign In
+            </Typography>
 
-            <Typography variant="h5" gutterBottom>Sign In</Typography>
             <Typography variant="body2" sx={{ mb: 3 }}>
               Enter your credentials to continue
             </Typography>
 
-            {/* FORM */}
             <Box component="form" onSubmit={handleSubmit}>
               <TextField
                 fullWidth
-                label="Username"
+                label="Email"
                 margin="normal"
                 required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
 
               <TextField
@@ -77,7 +112,15 @@ export default function SignIn() {
                 type="password"
                 margin="normal"
                 required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
+
+              {error && (
+                <Typography color="error" sx={{ mt: 1 }}>
+                  {error}
+                </Typography>
+              )}
 
               <Button
                 type="submit"
@@ -89,22 +132,9 @@ export default function SignIn() {
                   fontWeight: 600,
                 }}
               >
-                Sign In
+                {loading ? "Signing In..." : "Sign In"}
               </Button>
             </Box>
-
-            {/* ADMIN SWITCH *
-            <Box sx={{ textAlign: "center", mt: 3 }}>
-              <Link
-                component="button"
-                variant="body2"
-                onClick={() => setIsAdmin((prev) => !prev)}
-                sx={{ fontSize: "0.75rem" }}
-              >
-                {isAdmin ? "User Login" : "Admin"}
-              </Link>
-            </Box> */}
-
           </CardContent>
         </Card>
       </Box>

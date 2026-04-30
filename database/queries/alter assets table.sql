@@ -1,0 +1,6 @@
+ALTER TABLE assets
+ADD COLUMN os VARCHAR(100),
+ADD COLUMN ip_address VARCHAR(50);
+
+ALTER TABLE assets
+ADD COLUMN asset_type VARCHAR(100);

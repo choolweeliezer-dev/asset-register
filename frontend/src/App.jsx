@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
-import {ThemeProvider, createTheme, CssBaseline} from '@mui/material';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+//import {ThemeProvider, createTheme, CssBaseline} from '@mui/material';
 import { ThemeContextProvider } from './ThemeContext';
 
 import DashboardLayout from './components/dashboard/layouts/DashboardLayout';
@@ -13,8 +13,10 @@ import Dashboard from './pages/assetspages/Dashboard';
 import SubscriptionTable from './pages/subscriptions/SubscriptionsTable';
 import SignIn from './pages/signIn/SignIn';
 import MaintenanceFormDialog from './pages/maintenance/maintenanceForm';
-import MaintenancePage from './pages/maintenance/maintenancePage';
+//import MaintenancePage from './pages/maintenance/maintenancePage';
 import MaintenanceTable from './pages/maintenance/MaintenanceTable';
+import ProtectedRoute from './pages/signIn/ProtectedRoute';
+import UserTracker from './pages/admin/UserTracker';
 
 export default function App() {
 
@@ -25,7 +27,11 @@ export default function App() {
        <Routes>
          {/**Sign in  */}
           <Route path="/" element={<SignIn/>}/>
-      <Route element={<DashboardLayout/>}>
+      <Route element={
+        <ProtectedRoute>
+            <DashboardLayout/>
+        </ProtectedRoute>
+        }>
        
           {/* Dashboard */}
           <Route path="/assetspages/dash" element={<Dashboard />} />
@@ -43,6 +49,9 @@ export default function App() {
           {/**Maintenance */}
           <Route path="assetspages/pages/maintenance/his" element={<MaintenanceTable/>}/>
           <Route path="assetspages/pages/maintenance/form" element={<MaintenanceFormDialog/>}/>
+
+          {/**Admin Access Only */}
+          <Route path="assetspages/pages/admin/tracker" element={<UserTracker/>}/>
 
           {/* 404 fallback *
           <Route path="*" element={<div>404 Not Found</div>} /> */}

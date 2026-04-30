@@ -1,4 +1,7 @@
 import React from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
@@ -21,11 +24,31 @@ import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-import { assetsMock } from "../../components/dashboard/data/assetsMock";
+//import { assetsMock } from "../../components/dashboard/data/assetsMock";
 //import NewAssetsTable from "../../components/dashboard/assets/NewAssetsTable";
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
 
 export default function ItAssets() {
+
+  const [data, setData] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+  console.log("RAW DATA FROM API:", data);
+}, [data]);
+
+  React.useEffect(() => {
+  axios
+    .get("http://localhost:5000/api/assets")
+    .then((res) => {
+      setData(res.data);
+      setLoading(false);
+    })
+    .catch((err) => {
+      console.error(err);
+      setLoading(false);
+    });
+}, []);
 
    //HOOK
   const navigate = useNavigate();
@@ -58,8 +81,8 @@ export default function ItAssets() {
     setSelectedIds([]);
   };
 
-  //  MAIN DATA STATE
-  const [data, setData] = React.useState(assetsMock);
+  //  MAIN DATA STATE - replaced 
+ //const [data, setData] = React.useState(assetsMock);
 
   //  FILTER STATE
   const [search, setSearch] = React.useState("");
@@ -77,7 +100,6 @@ export default function ItAssets() {
 
   //  FILTER LOGIC
   const filteredData = data
-    .filter(item => item.type === "it")
     .filter(item => {
       const matchesSearch =
         item.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -124,6 +146,10 @@ export default function ItAssets() {
     setData(updated);
     handleClose();
   };
+
+  const handleEdit = (asset) => {
+  console.log("Edit clicked:", asset);
+};
 
   return (
 <Grid item xs={12}>
@@ -222,11 +248,11 @@ export default function ItAssets() {
                     <TableCell>{sub.name}</TableCell>
                     <TableCell>{sub.category}</TableCell>
                     <TableCell>{sub.os}</TableCell>
-                    <TableCell>{sub.ipAddress}</TableCell>
-                    <TableCell>{sub.serialNumber}</TableCell>
+                    <TableCell>{sub.ip_address}</TableCell>
+                    <TableCell>{sub.serial_number}</TableCell>
                     <TableCell>{sub.location}</TableCell>
                     <TableCell>{sub.assignedTo}</TableCell>
-                    <TableCell>{sub.nextMaintenance}</TableCell>
+                    <TableCell>{sub.nextMaintenance}</TableCell> 
                     <TableCell>
                       <IconButton
                         color="primary"

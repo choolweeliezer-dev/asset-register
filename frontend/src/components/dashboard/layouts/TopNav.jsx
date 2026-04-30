@@ -8,7 +8,10 @@ import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
+//import Menu from "@mui/icons-material/Menu";
+//import MenuItem  from '@mui/material/MenuItem';
 
+import { useNavigate } from 'react-router-dom';
 import { BellIcon } from '@phosphor-icons/react/dist/ssr/Bell';
 import { MagnifyingGlassIcon } from '@phosphor-icons/react/dist/ssr/MagnifyingGlass';
 import { UsersIcon } from '@phosphor-icons/react/dist/ssr/Users';
@@ -16,7 +19,44 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { useThemeContext } from '../../../ThemeContext';
 
 export default function TopNav({ onMenuClick }) {
-  
+
+  const navigate = useNavigate();
+  const [showLogout, setShowLogout] = React.useState(false);
+  //const [anchorEl, setAnchorEl] = React.useState(null);
+  //const open = Boolean(anchorEl);
+
+  const handleAvatarClick = (event) => {
+    setShowLogout((prev) => !prev);
+  };
+
+ // const handleClose = () => {
+   // setAnchorEl(null);
+  //};
+
+  const handleLogout = async () => {
+  const token = localStorage.getItem("token");
+
+  try {
+    await fetch("http://localhost:8080/users/logout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  } catch (err) {
+    console.error("Logout failed", err);
+  }
+
+  // ALWAYS clear frontend state after request
+  localStorage.removeItem("token");
+  localStorage.removeItem("role");
+  localStorage.removeItem("userId");
+  localStorage.removeItem("name");
+
+  navigate("/");
+  };
+    
   const {mode, toggleDarkMode} = useThemeContext();
   return (
     <Box
@@ -103,7 +143,24 @@ export default function TopNav({ onMenuClick }) {
         <Avatar
           src="/assets/avatar.png"
           sx={{ width: 32, height: 32, cursor: "pointer" }}
+          onClick={handleAvatarClick}
         />
+          {showLogout && (
+            <Typography
+              onClick={handleLogout}
+              sx={{
+                fontSize: "0.75rem",
+                color: "white",
+                mt: 0.5,
+                cursor: "pointer",
+                "&:hover": {
+                  textDecoration: "underline",
+                },
+              }}
+            >
+              Logout
+            </Typography>
+          )}
 
       </Stack>
     </Box>

@@ -9,6 +9,8 @@ import Divider from '@mui/material/Divider';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import MenuIcon from '@mui/icons-material/Menu';
 
+import { PersonIcon } from '@phosphor-icons/react';
+//import { PersonIcon } from '@phosphor-icons/react/dist/ssr';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import ComputerIcon from '@mui/icons-material/Computer';
@@ -29,6 +31,7 @@ const navItems = [
 
   { title: 'Subscriptions', path: '/pages/subscriptions/subs', icon: <SubscriptionsIcon />, section: 'subscriptions', active: 'true' },
   { title: 'Subscription Table', path: '/pages/subscriptions/subsTable', icon: <MoneyIcon />, section: 'subscriptions', active: 'true' },
+  { title: 'User Tracker', path:'/assetspages/pages/admin/tracker', icon: <PersonIcon/>, section: 'users', active: 'true'},
 ];
 
 /* ================= SECTION COMPONENT ================= */
@@ -59,6 +62,7 @@ const Section = ({ title, open, children }) => (
 /* ================= MAIN COMPONENT ================= */
 export default function SideNav() {
   const [open, setOpen] = React.useState(true);
+  const role = localStorage.getItem("role");
 
   const renderNavItem = (item) => (
     <NavLink
@@ -166,6 +170,14 @@ export default function SideNav() {
           .filter(item => item.section === 'subscriptions')
           .map(renderNavItem)}
       </Section>
+
+      {/* ================= SECTION 5: USERS ================= */}
+      {role === "ADMIN" && (
+      <Section title="USERS" open={open}>
+        {navItems
+          .filter(item => item.section === 'users')
+          .map(renderNavItem)}
+      </Section> )}
 
     </Box>
   );
