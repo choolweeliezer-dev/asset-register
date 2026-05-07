@@ -3,6 +3,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import { MenuItem } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import Table from "@mui/material/Table";
 import TableHead from "@mui/material/TableHead";
@@ -16,53 +17,83 @@ import DialogTitle from "@mui/material/DialogTitle";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import Button from "@mui/material/Button";
-import IconButton from "@mui/material/IconButton";
-import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
-import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import Chip from "@mui/material/Chip";
 
-import { maintenanceHis } from "../../components/dashboard/data/maintenanceMock";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
 import MaintenanceFormDialog from "./maintenanceForm";
-
+import {
+  getAllMaintenance,
+  updateMaintenance,
+  startMaintenance,
+  completeMaintenance,
+  failMaintenance,
+} from "../../api/maintenanceApi";
 
 export default function MaintenanceTable() {
+  const queryClient = useQueryClient();
 
-  const [data, setData] = React.useState(maintenanceHis);
   const [search, setSearch] = React.useState("");
-
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
   const [open, setOpen] = React.useState(false);
   const [selectedItem, setSelectedItem] = React.useState(null);
+
   const [formOpen, setFormOpen] = React.useState(false);
 
-  // SORT STATE
-  const [dateSort, setDateSort] = React.useState("none");
+  // =========================
+  // GET MAINTENANCE RECORDS
+  // =========================
+  const { data: response, isLoading, error } = useQuery({
+    queryKey: ["maintenance-records"],
+    queryFn: getAllMaintenance,
+  });
 
+  const data = response?.data || [];
+
+  // =========================
+  // UPDATE STATUS LOGIC (FIXED)
+  // =========================
+  const handleStatusUpdate = async (id, status) => {
+    try {
+      if (status === "IN_PROGRESS") {
+        await startMaintenance(id);
+      } else if (status === "COMPLETED") {
+        await completeMaintenance(id);
+      } else if (status === "FAILED") {
+        await failMaintenance(id);
+      }
+
+      // correct react-query refresh (NO refetch bug)
+      queryClient.invalidateQueries({ queryKey: ["maintenance-records"] });
+
+      setOpen(false);
+      setSelectedItem(null);
+    } catch (err) {
+      console.error("Status update failed:", err.response?.data || err.message);
+      alert("Update failed");
+    }
+  };
+
+  // =========================
   // FILTER
-  const filteredData = data.filter(item =>
+  // =========================
+  const filteredData = data.filter((item) =>
     Object.values(item)
       .join(" ")
       .toLowerCase()
       .includes(search.toLowerCase())
   );
 
-  // SORT
-  const sortedData = [...filteredData].sort((a, b) => {
-    const dateA = new Date(a.date);
-    const dateB = new Date(b.date);
-
-    if (dateSort === "asc") return dateA - dateB;
-    if (dateSort === "desc") return dateB - dateA;
-
-    return 0;
-  });
-
-  const paginatedData = sortedData.slice(
+  const paginatedData = filteredData.slice(
     page * rowsPerPage,
     page * rowsPerPage + rowsPerPage
   );
 
+  // =========================
+  // OPEN/CLOSE
+  // =========================
   const handleOpen = (item) => {
     setSelectedItem(item);
     setOpen(true);
@@ -73,25 +104,32 @@ export default function MaintenanceTable() {
     setSelectedItem(null);
   };
 
+  // =========================
+  // STATUS COLOR
+  // =========================
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "PENDING":
+        return "warning";
+      case "IN_PROGRESS":
+        return "info";
+      case "COMPLETED":
+        return "success";
+      case "FAILED":
+        return "error";
+      default:
+        return "default";
+    }
+  };
+
   return (
     <Grid item xs={12}>
       <Card>
         <CardContent>
+          <Typography variant="h6">Maintenance History</Typography>
 
-          {/* HEADER */}
-          <Box sx={{ mb: 2 }}>
-            <Typography variant="h6">Maintenance History</Typography>
-          </Box>
-
-          {/* SEARCH + BUTTON */}
-          <Box
-            sx={{
-              display: "flex",
-              mb: 2,
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
+          {/* SEARCH */}
+          <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
             <TextField
               label="Search"
               size="small"
@@ -105,77 +143,52 @@ export default function MaintenanceTable() {
           </Box>
 
           {/* TABLE */}
-          <Table
-            sx={{
-              "& th": { fontWeight: "bold" },
-              "& td, & th": { borderBottom: "1px solid #eee" },
-            }}
-          >
-            <TableHead>
-              <TableRow>
-                <TableCell>ID</TableCell>
+          {!isLoading && !error && (
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Asset Code</TableCell>
+                  <TableCell>Asset Name</TableCell>
+                  <TableCell>Maintenance Code</TableCell>
+                  <TableCell>Description</TableCell>
+                  <TableCell>Status</TableCell>
+                  <TableCell>Maintenance Date</TableCell>
+                  <TableCell>Cost</TableCell>
+                  <TableCell>Technician</TableCell>
+                </TableRow>
+              </TableHead>
 
-                {/* DATE SORT */}
-                <TableCell>
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    Date
-                    <IconButton
-                      size="small"
-                      onClick={() =>
-                        setDateSort(prev =>
-                          prev === "asc" ? "desc" : "asc"
-                        )
-                      }
-                    >
-                      {dateSort === "asc" ? (
-                        <ArrowUpwardIcon fontSize="small" />
-                      ) : (
-                        <ArrowDownwardIcon fontSize="small" />
-                      )}
-                    </IconButton>
-                  </Box>
-                </TableCell>
-
-                <TableCell>Asset</TableCell>
-                <TableCell>Location</TableCell>
-                <TableCell>Engineer</TableCell>
-                <TableCell>Status</TableCell>
-              </TableRow>
-            </TableHead>
-
-            <TableBody>
-              {filteredData.length > 0 ? (
-                paginatedData.map((item) => (
+              <TableBody>
+                {paginatedData.map((item) => (
                   <TableRow
-                    key={item.id}
+                    key={item.maintenanceId}
                     hover
-                    sx={{
-                      cursor: "pointer",
-                      "&:hover": {
-                        backgroundColor: "#f5f5f5",
-                        transform: "scale(1.01)",
-                      },
-                    }}
+                    sx={{ cursor: "pointer" }}
                     onClick={() => handleOpen(item)}
                   >
-                    <TableCell>{item.id}</TableCell>
-                    <TableCell>{item.date}</TableCell>
-                    <TableCell>{item.asset}</TableCell>
-                    <TableCell>{item.location}</TableCell>
-                    <TableCell>{item.engineer}</TableCell>
-                    <TableCell>{item.status}</TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={6} align="center">
-                    No maintenance records found
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+                    <TableCell>{item.assetCode}</TableCell>
+                    <TableCell>{item.assetName}</TableCell>
+                    <TableCell>{item.maintenanceCode}</TableCell>
+                    <TableCell>{item.description}</TableCell>
 
+                    <TableCell>
+                      <Chip
+                        label={item.status}
+                        color={getStatusColor(item.status)}
+                        size="small"
+                      />
+                    </TableCell>
+
+                    <TableCell>
+                      {item.scheduledDate || "N/A"}
+                    </TableCell>
+                    <TableCell>P {item.cost}</TableCell>
+                    <TableCell>{item.performedBy}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
 
         {/* PAGINATION */}
@@ -191,32 +204,72 @@ export default function MaintenanceTable() {
           }}
         />
 
-        {/* DIALOG (VIEW DETAILS) */}
+        {/* DETAILS DIALOG */}
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
           <DialogTitle>Maintenance Details</DialogTitle>
 
           <DialogContent>
             {selectedItem && (
               <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
-                <TextField label="Asset" value={selectedItem.asset} InputProps={{ readOnly: true }} />
-                <TextField label="Location" value={selectedItem.location} InputProps={{ readOnly: true }} />
-                <TextField label="Engineer" value={selectedItem.engineer} InputProps={{ readOnly: true }} />
-                <TextField label="Status" value={selectedItem.status} InputProps={{ readOnly: true }} />
-                <TextField label="Date" value={selectedItem.date} InputProps={{ readOnly: true }} />
+                <TextField value={selectedItem.assetCode} label="Asset Code" InputProps={{ readOnly: true }} />
+                <TextField value={selectedItem.assetName} label="Asset Name" InputProps={{ readOnly: true }} />
+
+                <TextField
+                  select
+                  label="Status"
+                  value={selectedItem.status}
+                  onChange={(e) =>
+                    setSelectedItem({
+                      ...selectedItem,
+                      status: e.target.value,
+                    })
+                  }
+                >
+                  <MenuItem value="PENDING">PENDING</MenuItem>
+                  <MenuItem value="IN_PROGRESS">IN_PROGRESS</MenuItem>
+                  <MenuItem value="COMPLETED">COMPLETED</MenuItem>
+                  <MenuItem value="FAILED">FAILED</MenuItem>
+                </TextField>
+
+                <TextField
+                  value={selectedItem.description}
+                  label="Description"
+                  multiline
+                  onChange={(e) =>
+                    setSelectedItem({
+                      ...selectedItem,
+                      description: e.target.value,
+                    })
+                  }
+                />
               </Box>
             )}
           </DialogContent>
 
+          {/* CLEAN BUTTONS (NO TOGGLE MAGIC) */}
           <DialogActions>
-            <Button onClick={handleClose}>Close</Button>
+            <Button onClick={handleClose}>
+              Cancel
+            </Button>
+
+            <Button
+              variant="contained"
+              onClick={() =>
+                handleStatusUpdate(
+                  selectedItem.maintenanceId,
+                  selectedItem.status
+                )
+              }
+            >
+              Save
+            </Button>
           </DialogActions>
         </Dialog>
 
-        {/**Sumbit Report Dialog */}
         <MaintenanceFormDialog
-        open={formOpen}
-        onClose={() => setFormOpen(false)}/>
-
+          open={formOpen}
+          onClose={() => setFormOpen(false)}
+        />
       </Card>
     </Grid>
   );

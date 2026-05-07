@@ -10,9 +10,10 @@ import {
 import { useNavigate } from "react-router-dom";
 
 import { loginUser } from "../../api/authApi";
-import { useState } from "react";
+//import { useEffect } from "react";
 
 export default function SignIn() {
+
   const navigate = useNavigate();
 
   const [email, setEmail] = React.useState("");
@@ -20,46 +21,39 @@ export default function SignIn() {
   const [error, setError] = React.useState("");
   const [loading, setLoading] = React.useState(false);
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
+  
+      const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError("");
+        setLoading(true);
 
-  setError("");
-  setLoading(true);
+        try {
+          const response = await loginUser({
+            email: email.trim(),
+            password,
+          });
 
-  try {
-    const response = await loginUser({
-      email: email.trim(),
-      password,
-    });
+          console.log("LOGIN RESPONSE:", response.data);
 
-    console.log("LOGIN RESPONSE:", response.data);
+          const token = response.data?.token;
 
-    const data = response.data;
+          if (!token) {
+            throw new Error("No token found in response");
+          }
+                navigate("/assetspages/dash", { replace: true });
 
-    if (!data.token) {
-      setError("Login failed: no token received");
-      return;
-    }
+        } catch (err) {
+          console.error("Login error:", err);
 
-    localStorage.setItem("token", data.token);
-
-    if (data.userId) {
-      localStorage.setItem("userId", data.userId);
-    }
-
-    if (data.name) {
-      localStorage.setItem("name", data.name);
-    }
-
-    navigate("/assetspages/dash");
-
-  } catch (err) {
-    console.error(err);
-    setError("Invalid email or password");
-  } finally {
-    setLoading(false);
-  }
-};
+          if (err.response?.status === 401) {
+            setError("Invalid email or password");
+          } else {
+            setError("An error occurred during login");
+          }
+        } finally {
+          setLoading(false);
+        }
+      };
 
   return (
     <Box
@@ -96,7 +90,7 @@ const handleSubmit = async (e) => {
               Enter your credentials to continue
             </Typography>
 
-            <Box component="form" onSubmit={handleSubmit}>
+            <Box>
               <TextField
                 fullWidth
                 label="Email"
@@ -123,9 +117,11 @@ const handleSubmit = async (e) => {
               )}
 
               <Button
-                type="submit"
+                type="button"
+                onClick={handleSubmit}
                 fullWidth
                 variant="contained"
+                disabled={loading}
                 sx={{
                   mt: 2,
                   py: 1.2,

@@ -6,7 +6,7 @@ import Footer from './Footer';
 import SideNav from './SideNav';
 import TopNav from './TopNav';
 
-export default function DashboardLayout({ children }) {
+export default function DashboardLayout() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -15,20 +15,16 @@ export default function DashboardLayout({ children }) {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', bgcolor: "background.default" }}>
 
-      {/* TOP NAV (pass toggle for mobile menu button later) */}
       <TopNav onMenuClick={() => setOpen(true)} />
 
-      {/* MAIN AREA */}
       <Box sx={{ display: 'flex', flex: 1 }}>
 
-        {/* DESKTOP SIDEBAR */}
         {!isMobile && (
           <Box sx={{ width: 260, flexShrink: 0 }}>
             <SideNav />
           </Box>
         )}
 
-        {/* MOBILE SIDEBAR (DRAWER) */}
         <Drawer
           open={open}
           onClose={() => setOpen(false)}
@@ -37,24 +33,21 @@ export default function DashboardLayout({ children }) {
           <SideNav />
         </Drawer>
 
-        {/* CONTENT AREA */}
         <Box
           sx={{
             flex: 1,
             backgroundColor: 'background.default',
             display: 'flex',
             flexDirection: 'column',
-            minWidth: 0, 
+            minWidth: 0,
             pb: 10,
           }}
         >
           <Box sx={{ width: '100%', maxWidth: '1400px', mx: 'auto', p: 2 }}>
-            {children}
+            <Outlet />
           </Box>
-           <main>
-        <Outlet />
-      </main>
-          <Footer/>
+
+          <Footer />
         </Box>
 
       </Box>

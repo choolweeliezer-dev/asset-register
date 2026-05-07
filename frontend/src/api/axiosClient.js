@@ -1,6 +1,7 @@
+// axiosClient.js
+
 import axios from "axios";
 
-// 1. Create a custom axios instance
 const axiosClient = axios.create({
   baseURL: "http://localhost:8080/",
   headers: {
@@ -8,32 +9,43 @@ const axiosClient = axios.create({
   },
 });
 
-//attach token to every request if exists
 axiosClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("authToken");
+
+    console.log("======== AXIOS REQUEST ========");
+    console.log("➡️ URL:", config.url);
+    console.log("➡️ METHOD:", config.method);
+    console.log("➡️ TOKEN FROM STORAGE:", token);
+
+    // 🚫 DO NOT attach token to login request
+    if (config.url.includes("/users/login")) {
+      console.log("🚫 Skipping token for login request");
+      console.log("================================");
+      return config;
+    }
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
 
+    console.log("➡️ FINAL HEADERS SENT:", config.headers);
+    console.log("================================");
+
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-//handle expires session globally
 axiosClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log("✅ RESPONSE SUCCESS:", response.config.url);
+    return response;
+  },
   (error) => {
-    if (error.response && error.response.status === 401) {
-      localStorage.removeItem("token");
-
-      // force logout redirect
-      window.location.href = "/login";
-    }
+    console.log("❌ RESPONSE ERROR:", error.config?.url);
+    console.log("❌ STATUS:", error.response?.status);
+    console.log("❌ DATA:", error.response?.data);
 
     return Promise.reject(error);
   }

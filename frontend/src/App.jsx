@@ -6,7 +6,7 @@ import { ThemeContextProvider } from './ThemeContext';
 import DashboardLayout from './components/dashboard/layouts/DashboardLayout';
 import MainAssets from './pages/assetspages/MainAssets';
 import ItAssets from './pages/assetspages/ItAssets';
-import AddAsset from './pages/assetspages/AddAsset';
+import AddAsset from './pages/assetspages/AddAssetForm';
 import AssetDetails from './pages/assetspages/AssetDetails';
 import Subscriptions from './pages/subscriptions/Subscriptions';
 import Dashboard from './pages/assetspages/Dashboard';
@@ -17,6 +17,7 @@ import MaintenanceFormDialog from './pages/maintenance/maintenanceForm';
 import MaintenanceTable from './pages/maintenance/MaintenanceTable';
 import ProtectedRoute from './pages/signIn/ProtectedRoute';
 import UserTracker from './pages/admin/UserTracker';
+import PublicRoute from './pages/signIn/PublicRoute';
 
 export default function App() {
 
@@ -26,7 +27,9 @@ export default function App() {
     <ThemeContextProvider>
        <Routes>
          {/**Sign in  */}
-          <Route path="/" element={<SignIn/>}/>
+          <Route path="/" element={
+            <PublicRoute><SignIn/></PublicRoute>}/>
+
       <Route element={
         <ProtectedRoute>
             <DashboardLayout/>
