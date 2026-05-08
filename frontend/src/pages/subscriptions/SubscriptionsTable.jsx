@@ -24,13 +24,15 @@ import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import { useNavigate } from "react-router-dom";
 
-import { assetsMock } from "../../components/dashboard/data/assetsMock";
+import { getSubscriptions, deleteSubscription, updateSubscription } from "../../api/subsApi";
+import AddSubPage from "./AddSubPage";
+import AddSubscriptionDialog from "./AddSubForm";
 
 export default function SubscriptionTable() {
 
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
-  const [data, setData] = React.useState(assetsMock);
+  const [data, setData] = React.useState([]);
   const [search, setSearch] = React.useState("");
   const [typeFilter, setTypeFilter] = React.useState("");
 
@@ -40,24 +42,35 @@ export default function SubscriptionTable() {
   const [open, setOpen] = React.useState(false);
   const [selectedSub, setSelectedSub] = React.useState(null);
   const [editedSub, setEditedSub] = React.useState(null);
+  const [formOpen, setFormOpen] = React.useState(false);
 
+  React.useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      const res = await getSubscriptions();
+      setData(res.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
   // SORT STATES (ADDED)
   const [endDateSort, setEndDateSort] = React.useState("none");
   const [categorySort, setCategorySort] = React.useState("none");
 
-  const filteredData = data
-    .filter(item => item.type === "sub")
-    .filter(item => {
-      const matchesSearch =
-        item.name.toLowerCase().includes(search.toLowerCase()) ||
-        item.category.toLowerCase().includes(search.toLowerCase()) ||
-        (item.subscriptionType || "").toLowerCase().includes(search.toLowerCase());
+  const filteredData = data.filter(item => {
+    const matchesSearch =
+      item.name.toLowerCase().includes(search.toLowerCase()) ||
+      item.subscriptionCode.toLowerCase().includes(search.toLowerCase()) ||
+      item.type.toLowerCase().includes(search.toLowerCase());
 
-      const matchesType =
-        typeFilter ? item.subscriptionType === typeFilter : true;
+    const matchesType =
+      typeFilter ? item.type === typeFilter : true;
 
-      return matchesSearch && matchesType;
-    });
+    return matchesSearch && matchesType;
+  });
 
   // SORT LOGIC (CATEGORY + END DATE)
   const sortedData = [...filteredData].sort((a, b) => {
@@ -98,19 +111,32 @@ export default function SubscriptionTable() {
     setSelectedSub(null);
   };
 
-  const handleSave = () => {
-    const updated = data.map(item =>
-      item.id === editedSub.id ? editedSub : item
-    );
-    setData(updated);
-    handleClose();
+  const handleSave = async () => {
+    try {
+      await updateSubscription(editedSub.id, editedSub);
+
+      // refresh from DB (IMPORTANT — keeps UI consistent)
+      const res = await getSubscriptions();
+      setData(res.data);
+
+      handleClose();
+    } catch (err) {
+      console.error("Update failed:", err);
+    }
   };
 
-  const handleDelete = () => {
-    const updated = data.filter(item => item.id !== selectedSub.id);
-    setData(updated);
-    handleClose();
-  };
+    const handleDelete = async (id) => {
+      try {
+        await deleteSubscription(id);
+
+        // remove from UI instantly OR refresh from DB
+        setData(prev => prev.filter(item => item.id !== id));
+
+        handleClose();
+      } catch (err) {
+        console.error("Delete failed:", err);
+      }
+    };
 
   return (
     <Grid item xs={12}>
@@ -149,14 +175,15 @@ export default function SubscriptionTable() {
                 <MenuItem value="Monthly">Monthly</MenuItem>
                 <MenuItem value="quarterly">Quaterly</MenuItem>
                 <MenuItem value="annual">Annual</MenuItem>
+
               </TextField>
             </Box>
 
             <Button
               variant="contained"
-              onClick={() => navigate("/assetspages/add")}
+              onClick={() => setFormOpen(true)}
             >
-              Add Asset
+              Add Subscription
             </Button>
           </Box>
 
@@ -166,14 +193,13 @@ export default function SubscriptionTable() {
           }}>
             <TableHead>
               <TableRow>
-                <TableCell>ID</TableCell>
+                <TableCell>Code</TableCell>
                 <TableCell>Name</TableCell>
 
                 {/* CATEGORY SORT */}
                 <TableCell>
                   <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                    Category
-
+                    Type
                     <IconButton
                       size="small"
                       onClick={() =>
@@ -191,8 +217,8 @@ export default function SubscriptionTable() {
                   </Box>
                 </TableCell>
 
-                <TableCell>Subscription Type</TableCell>
                 <TableCell>Cost</TableCell>
+                <TableCell>Status</TableCell>
                 <TableCell>Start Date</TableCell>
 
                 {/* END DATE SORT */}
@@ -236,20 +262,30 @@ export default function SubscriptionTable() {
                     }}
                     onClick={() => handleOpen(sub)}
                   >
-                    <TableCell>{sub.id}</TableCell>
+                    <TableCell>{sub.subscriptionCode}</TableCell>
                     <TableCell>{sub.name}</TableCell>
-                    <TableCell>{sub.category}</TableCell>
-                    <TableCell>{sub.subscriptionType}</TableCell>
-                    <TableCell>{sub.subscriptionCost}</TableCell>
-                    <TableCell>{sub.subscriptionStartDate}</TableCell>
-                    <TableCell>{sub.subscriptionEndDate}</TableCell>
+                    <TableCell>{sub.type}</TableCell>
+                    <TableCell>{sub.cost}</TableCell>
+                    <TableCell>{sub.status}</TableCell>
+                    <TableCell>{sub.startDate}</TableCell>
+                    <TableCell>{sub.endDate}</TableCell>
 
                     <TableCell>
-                      <IconButton color="primary">
+                      <IconButton 
+                      color="primary"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOpen(sub);
+                      }}>
                         <EditIcon />
                       </IconButton>
 
-                      <IconButton color="error" onClick={() => handleDelete()}>
+                      <IconButton 
+                      color="error" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(sub.id)
+                        }}>
                         <DeleteIcon />
                       </IconButton>
                     </TableCell>
@@ -280,64 +316,104 @@ export default function SubscriptionTable() {
         />
 
         <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
-          <DialogTitle>Edit Subscription</DialogTitle>
+          <DialogTitle>Subscription Details</DialogTitle>
 
           <DialogContent>
             {editedSub && (
               <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 1 }}>
+
+                <TextField
+                  label="Subscription Code"
+                  value={editedSub.subscriptionCode}
+                  disabled
+                  fullWidth
+                />
+
                 <TextField
                   label="Name"
-                  value={editedSub.name}
+                  value={editedSub.name || ""}
                   onChange={(e) =>
                     setEditedSub({ ...editedSub, name: e.target.value })
                   }
+                  fullWidth
                 />
+
                 <TextField
-                  label="Category"
-                  value={editedSub.category}
+                  label="Type"
+                  value={editedSub.type || ""}
                   onChange={(e) =>
-                    setEditedSub({ ...editedSub, category: e.target.value })
+                    setEditedSub({ ...editedSub, type: e.target.value })
                   }
+                  fullWidth
                 />
+
                 <TextField
                   label="Status"
-                  value={editedSub.status}
+                  value={editedSub.status || ""}
                   onChange={(e) =>
                     setEditedSub({ ...editedSub, status: e.target.value })
                   }
+                  fullWidth
                 />
-                <TextField
-                  label="Assigned To"
-                  value={editedSub.assignedTo}
-                  onChange={(e) =>
-                    setEditedSub({ ...editedSub, assignedTo: e.target.value })
-                  }
-                />
-                <TextField
-                  label="Subscription Type"
-                  value={editedSub.subscriptionType}
-                  onChange={(e) =>
-                    setEditedSub({ ...editedSub, subscriptionType: e.target.value })
-                  }
-                />
+
                 <TextField
                   label="Cost"
-                  value={editedSub.subscriptionCost}
+                  value={editedSub.cost || ""}
                   onChange={(e) =>
-                    setEditedSub({ ...editedSub, subscriptionCost: e.target.value })
+                    setEditedSub({ ...editedSub, cost: e.target.value })
                   }
+                  fullWidth
                 />
+
+                <TextField
+                  label="Start Date"
+                  type="date"
+                  value={editedSub.startDate || ""}
+                  onChange={(e) =>
+                    setEditedSub({ ...editedSub, startDate: e.target.value })
+                  }
+                  InputLabelProps={{ shrink: true }}
+                  fullWidth
+                />
+
+                <TextField
+                  label="End Date"
+                  type="date"
+                  value={editedSub.endDate || ""}
+                  onChange={(e) =>
+                    setEditedSub({ ...editedSub, endDate: e.target.value })
+                  }
+                  InputLabelProps={{ shrink: true }}
+                  fullWidth
+                />
+
               </Box>
             )}
           </DialogContent>
 
           <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
-            <Button color="error" onClick={handleDelete}>Delete</Button>
-            <Button variant="contained" onClick={handleSave}>Save</Button>
+
+            <Button
+              color="error"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDelete(editedSub.id);
+              }}
+            >
+              Delete
+            </Button>
+
+            <Button variant="contained" onClick={handleSave}>
+              Save
+            </Button>
           </DialogActions>
         </Dialog>
 
+               {/**Sumbit Report Dialog */}
+                              <AddSubscriptionDialog
+                              open={formOpen}
+                              onClose={() => setFormOpen(false)}/>
       </Card>
     </Grid>
   );

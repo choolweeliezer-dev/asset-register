@@ -9,32 +9,31 @@ import Divider from '@mui/material/Divider';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import MenuIcon from '@mui/icons-material/Menu';
 
-import { PersonIcon } from '@phosphor-icons/react';
-//import { PersonIcon } from '@phosphor-icons/react/dist/ssr';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
 import ComputerIcon from '@mui/icons-material/Computer';
 import InfoIcon from '@mui/icons-material/Info';
-import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
+//import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
+import { MoneyIcon, TrendUpIcon, PersonIcon } from '@phosphor-icons/react';
 
-import "../../../App.css";
-import { MoneyIcon, TrendUpIcon } from '@phosphor-icons/react';
+import { getRole } from '../../../api/jwtDecode';
 
-/* ================= NAV ITEMS ================= */
 const navItems = [
-  { title: 'Dashboard', path: '/assetspages/dash', icon: <DashboardIcon />, section: 'main', active: 'true' },
-  { title: 'Main Assets', path: '/assetspages/main', icon: <Inventory2Icon />, section: 'main', active: 'true' },
-  { title: 'IT Assets', path: '/assetspages/it', icon: <ComputerIcon />, section: 'main', active: 'true' },
+  { title: 'Dashboard', path: '/assetspages/dash', icon: <DashboardIcon />, section: 'main' },
+  { title: 'Main Assets', path: '/assetspages/main', icon: <Inventory2Icon />, section: 'main' },
+  { title: 'IT Assets', path: '/assetspages/it', icon: <ComputerIcon />, section: 'main' },
 
-  { title: 'Asset Details', path: '/assetspages/details', icon: <InfoIcon />, section: 'maintenance', active: 'true' },
-  { title: 'Maintenance History', path: 'assetspages/pages/maintenance/his', icon: <TrendUpIcon />, section: 'maintenance', active: 'false' },
+  { title: 'Asset Details', path: '/assetspages/details', icon: <InfoIcon />, section: 'maintenance' },
+  { title: 'Maintenance History', path: '/assetspages/pages/maintenance/his', icon: <TrendUpIcon />, section: 'maintenance' },
 
-  { title: 'Subscriptions', path: '/pages/subscriptions/subs', icon: <SubscriptionsIcon />, section: 'subscriptions', active: 'true' },
-  { title: 'Subscription Table', path: '/pages/subscriptions/subsTable', icon: <MoneyIcon />, section: 'subscriptions', active: 'true' },
-  { title: 'User Tracker', path:'/assetspages/pages/admin/tracker', icon: <PersonIcon/>, section: 'users', active: 'true'},
+
+  { title: 'Subscription Table', path: '/pages/subscriptions/subsTable', icon: <MoneyIcon />, section: 'subscriptions' },
+
+  // Admin only
+  { title: 'User Tracker', path: '/assetspages/pages/admin/tracker', icon: <PersonIcon />, section: 'admin' },
+  { title: 'User Management', path: '/assetspages/pages/admin/users', icon: <PersonIcon />, section: 'admin' },
 ];
 
-/* ================= SECTION COMPONENT ================= */
 const Section = ({ title, open, children }) => (
   <Box sx={{ mb: 2 }}>
     {open && (
@@ -52,51 +51,41 @@ const Section = ({ title, open, children }) => (
         {title}
       </Typography>
     )}
-
-    <Stack spacing={1}>
-      {children}
-    </Stack>
+    <Stack spacing={1}>{children}</Stack>
   </Box>
 );
 
-/* ================= MAIN COMPONENT ================= */
+// {/* { title: 'Subscriptions', path: '/pages/subscriptions/subs', icon: <SubscriptionsIcon />, section: 'subscriptions' }, */}
+
 export default function SideNav() {
   const [open, setOpen] = React.useState(true);
-  const role = localStorage.getItem("role");
+  const [role, setRole] = React.useState(null);
+
+  React.useEffect(() => {
+    const loadRole = () => setRole(getRole());
+    loadRole();
+
+    window.addEventListener('storage', loadRole);
+    return () => window.removeEventListener('storage', loadRole);
+  }, []);
+
+  const isAdmin = role === "ADMIN" || role === "admin";
 
   const renderNavItem = (item) => (
     <NavLink
-     key={item.path}
-    to={item.active === false ? "#" : item.path}
-    onClick={(e) => {
-      if (!item.active) e.preventDefault(); // block navigation
-    }}
-    style={({ isActive }) => ({
-      textDecoration: "none",
-      color: item.active === false
-        ? "rgba(255,255,255,0.3)"   // faded color
-        : isActive
-        ? "rgb(237, 231, 231)"
-        : "white",
-
-      padding: "10px",
-      borderRadius: 8,
-      background: isActive && item.active !== false
-        ? "rgba(0,188,212,0.15)"
-        : "transparent",
-
-      display: "flex",
-      alignItems: "center",
-      transition: "all 0.2s ease",
-      cursor: item.active === false ? "not-allowed" : "pointer",
-
-      ':hover': {
-        backgroundColor: "rgba(59, 130, 246, 0.15)",
-        transform: "translateX(4px)",
-      },
-    })}
+      key={item.path}
+      to={item.path}
+      style={({ isActive }) => ({
+        textDecoration: "none",
+        color: isActive ? "rgb(237, 231, 231)" : "white",
+        padding: "10px",
+        borderRadius: 8,
+        background: isActive ? "rgba(0,188,212,0.15)" : "transparent",
+        display: "flex",
+        alignItems: "center",
+        transition: "all 0.2s ease",
+      })}
     >
-      {/* ICON */}
       <Box
         sx={{
           display: 'flex',
@@ -104,18 +93,12 @@ export default function SideNav() {
           justifyContent: 'center',
           minWidth: 40,
           fontSize: 22,
-          opacity: item.active === false ? 0.4 : 1,
         }}
       >
         {item.icon}
       </Box>
 
-      {/* TEXT */}
-      {open && (
-        <span style={{ marginLeft: 10 }}>
-          {item.title}
-        </span>
-      )}
+      {open && <span style={{ marginLeft: 10 }}>{item.title}</span>}
     </NavLink>
   );
 
@@ -125,7 +108,6 @@ export default function SideNav() {
         background: 'linear-gradient(180deg, #0f172a, #2864c6)',
         width: open ? 240 : 70,
         height: '100%',
-        
         backdropFilter: 'blur(12px)',
         borderRight: '1px solid rgba(255,255,255,0.08)',
         color: 'white',
@@ -133,52 +115,41 @@ export default function SideNav() {
         py: 1,
         transition: 'width 0.2s ease',
         overflowX: 'hidden',
-        '&:hover':{backgroundColor: 'rgba(59, 130, 246, 0.12)'},
+        '&:hover': {
+          backgroundColor: 'rgba(59, 130, 246, 0.12)',
+        },
       }}
     >
-
-      {/* ================= SECTION 1: LOGO ================= */}
+      {/* Toggle Button */}
       <Box>
-
-        <IconButton
-          onClick={() => setOpen(!open)}
-          sx={{ color: 'white' }}
-        >
+        <IconButton onClick={() => setOpen(!open)} sx={{ color: 'white' }}>
           {open ? <MenuOpenIcon /> : <MenuIcon />}
         </IconButton>
       </Box>
 
       <Divider sx={{ bgcolor: 'rgba(255,255,255,0.1)', mb: 2 }} />
 
-      {/* ================= SECTION 2: MAIN ASSETS ================= */}
+      {/* Main Assets */}
       <Section title="ASSETS" open={open}>
-        {navItems
-          .filter(item => item.section === 'main')
-          .map(renderNavItem)}
+        {navItems.filter(item => item.section === 'main').map(renderNavItem)}
       </Section>
 
-      {/* ================= SECTION 3: MAINTENANCE ================= */}
+      {/* Maintenance */}
       <Section title="MAINTENANCE" open={open}>
-        {navItems
-          .filter(item => item.section === 'maintenance')
-          .map(renderNavItem)}
+        {navItems.filter(item => item.section === 'maintenance').map(renderNavItem)}
       </Section>
 
-      {/* ================= SECTION 4: SUBSCRIPTIONS ================= */}
+      {/* Subscriptions */}
       <Section title="SUBSCRIPTIONS" open={open}>
-        {navItems
-          .filter(item => item.section === 'subscriptions')
-          .map(renderNavItem)}
+        {navItems.filter(item => item.section === 'subscriptions').map(renderNavItem)}
       </Section>
 
-      {/* ================= SECTION 5: USERS ================= */}
-      {role === "ADMIN" && (
-      <Section title="USERS" open={open}>
-        {navItems
-          .filter(item => item.section === 'users')
-          .map(renderNavItem)}
-      </Section> )}
-
+      {/* ADMIN SECTION */}
+      {isAdmin && (
+        <Section title="ADMIN" open={open}>
+          {navItems.filter(item => item.section === 'admin').map(renderNavItem)}
+        </Section>
+      )}
     </Box>
   );
 }
