@@ -35,11 +35,28 @@ const Field = ({ error, required, ...props }) => (
     sx={{
       '& .MuiInputBase-root': {
         height: 60,
-        width: 250
+        width: 500
       }
     }}
     {...props}
   />
+);
+
+/* =========================
+   FORM FIELD WRAPPER (ADDED)
+========================= */
+const FormField = ({ label, children }) => (
+  <Box>
+    <Typography
+      variant="body2"
+      fontWeight={600}
+      color="text.secondary"
+      sx={{ mb: 0.8 }}
+    >
+      {label}
+    </Typography>
+    {children}
+  </Box>
 );
 
 export default function AddSubscriptionDialog({ open, onClose }) {
@@ -123,116 +140,159 @@ export default function AddSubscriptionDialog({ open, onClose }) {
       <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
 
         <DialogTitle>
-          <Typography variant="h6" fontWeight={600}>
+          <Typography variant="h6" fontWeight={500}>
             Add Subscription
           </Typography>
         </DialogTitle>
 
-        <DialogContent dividers sx={{ py: 4 }}>
+           <DialogContent>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 4,
+            mt: 1,
+            alignItems: "center",
+          }}
+        >
 
-          {/* BASIC INFO */}
-          <Box sx={{ mb: 4 }}>
-            <Box display="flex" alignItems="center" gap={1} mb={2}>
-              <Subscriptions color="primary" />
-              <Typography variant="h6">Basic Information</Typography>
+          {/* ================= BASIC INFO ================= */}
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <Box sx={{ width: 500 }}>
+
+              <Box sx={{
+                backgroundColor: "#e0e0e0",
+                padding: "6px 12px",
+                borderRadius: "8px",
+                mb: 2,
+                textAlign: "center",
+              }}>
+                <Typography fontWeight="bold">
+                  Basic Information
+                </Typography>
+              </Box>
+
+              <Grid container spacing={2}>
+
+                <Grid item xs={6}>
+                  <FormField label="Subscription Name">
+                    <Field
+                      value={form.name}
+                      onChange={handleChange("name")}
+                      error={errors.name}
+                      required
+                    />
+                  </FormField>
+                </Grid>
+
+                <Grid item xs={6}>
+                  <FormField label="Type">
+                    <Field
+                      select
+                      value={form.type}
+                      onChange={handleChange("type")}
+                      error={errors.type}
+                      required
+                    >
+                      <MenuItem value="MONTHLY">Monthly</MenuItem>
+                      <MenuItem value="QUARTERLY">Quarterly</MenuItem>
+                      <MenuItem value="ANNUALLY">Annually</MenuItem>
+                      <MenuItem value="MORE_THAN_ONE_YEAR">1-5 Years</MenuItem>
+                      <MenuItem value="FIVE_PLUS_YEARS">5+ Years</MenuItem>
+                    </Field>
+                  </FormField>
+                </Grid>
+
+              </Grid>
+
             </Box>
-
-            <Grid container spacing={3}>
-
-              <Grid item xs={12} md={6}>
-                <Field
-                  label="Subscription Name"
-                  value={form.name}
-                  onChange={handleChange("name")}
-                  error={errors.name}
-                  required
-                />
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <Field
-                  select
-                  label="Type"
-                  value={form.type}
-                  onChange={handleChange("type")}
-                  error={errors.type}
-                  required
-                >
-                  <MenuItem value="MONTHLY">Monthly</MenuItem>
-                  <MenuItem value="QUARTERLY">Quarterly</MenuItem>
-                  <MenuItem value="ANNUALLY">Annually</MenuItem>
-                  <MenuItem value="MORE_THAN_ONE_YEAR">1-5 Years</MenuItem>
-                  <MenuItem value="FIVE_PLUS_YEARS">5+ Years</MenuItem>
-                </Field>
-              </Grid>
-
-            </Grid>
           </Box>
 
-          <Divider sx={{ my: 3 }} />
+          {/* ================= DURATION ================= */}
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <Box sx={{ width: 500 }}>
 
-          {/* DATES */}
-          <Box sx={{ mb: 4 }}>
-            <Box display="flex" alignItems="center" gap={1} mb={2}>
-              <DateRange color="primary" />
-              <Typography variant="h6">Duration</Typography>
+              <Box sx={{
+                backgroundColor: "#e0e0e0",
+                padding: "6px 12px",
+                borderRadius: "8px",
+                mb: 2,
+                textAlign: "center",
+              }}>
+                <Typography fontWeight="bold">
+                  Duration
+                </Typography>
+              </Box>
+
+              <Grid container spacing={2}>
+
+                <Grid item xs={6}>
+                  <FormField label="Start Date">
+                    <Field
+                      type="date"
+                      value={form.startDate}
+                      onChange={handleChange("startDate")}
+                      error={errors.startDate}
+                      required
+                    />
+                  </FormField>
+                </Grid>
+
+                <Grid item xs={6}>
+                  <FormField label="End Date">
+                    <Field
+                      type="date"
+                      value={form.endDate}
+                      onChange={handleChange("endDate")}
+                      error={errors.endDate}
+                      required
+                    />
+                  </FormField>
+                </Grid>
+
+              </Grid>
+
             </Box>
-
-            <Grid container spacing={3}>
-
-              <Grid item xs={12} md={6}>
-                <Field
-                  type="date"
-                  label="Start Date"
-                  value={form.startDate}
-                  onChange={handleChange("startDate")}
-                  error={errors.startDate}
-                  required
-                  InputLabelProps={{ shrink: true }}
-                />
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <Field
-                  type="date"
-                  label="End Date"
-                  value={form.endDate}
-                  onChange={handleChange("endDate")}
-                  error={errors.endDate}
-                  required
-                  InputLabelProps={{ shrink: true }}
-                />
-              </Grid>
-
-            </Grid>
           </Box>
 
-          <Divider sx={{ my: 3 }} />
+          {/* ================= COST ================= */}
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <Box sx={{ width: 500 }}>
 
-          {/* COST */}
-          <Box sx={{ mb: 2 }}>
-            <Box display="flex" alignItems="center" gap={1} mb={2}>
-              <AttachMoney color="primary" />
-              <Typography variant="h6">Financial Details</Typography>
-            </Box>
+              <Box sx={{
+                backgroundColor: "#e0e0e0",
+                padding: "6px 12px",
+                borderRadius: "8px",
+                mb: 2,
+                textAlign: "center",
+              }}>
+                <Typography fontWeight="bold">
+                  Financial Details
+                </Typography>
+              </Box>
 
-            <Grid container spacing={3}>
+              <Grid container spacing={2}>
 
-              <Grid item xs={12} md={6}>
-                <Field
-                  label="Cost"
-                  type="number"
-                  value={form.cost}
-                  onChange={handleChange("cost")}
-                  error={errors.cost}
-                  required
-                />
+                <Grid item xs={6}>
+                  <FormField label="Cost">
+                    <Field
+                      type="number"
+                      value={form.cost}
+                      onChange={handleChange("cost")}
+                      error={errors.cost}
+                      required
+                    />
+                  </FormField>
+                </Grid>
+
               </Grid>
 
-            </Grid>
+            </Box>
           </Box>
 
-        </DialogContent>
+        </Box>
+      </DialogContent>
+
 
         <DialogActions sx={{ px: 3, py: 2 }}>
 

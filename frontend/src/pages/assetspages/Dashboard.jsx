@@ -3,13 +3,13 @@ import Box from "@mui/material/Box";
 import { Grid } from "@mui/material";
 import { assetsMock } from "../../components/dashboard/data/assetsMock";
 
-import { SubscriptionCard} from "../../components/chartsCards/SubscriptionsCard";
-import { MaintenanceCard } from "../../components/chartsCards/MaintenanceCard";
-import { InactiveCard } from "../../components/chartsCards/InactiveAssetsCard";
-import { AssetStatusChart } from "../../components/chartsCards/assetStatusChart";
-import {AssetPreview} from "../../components/chartsCards/AssetPreview";
-import { MaintenanceTrendChart } from "../../components/chartsCards/MaintenanceTrendChart";
-import { maintenanceHis } from "../../components/dashboard/data/maintenanceMock";
+//import { SubscriptionCard} from "../../components/chartsCards/SubscriptionsCard";
+//import { MaintenanceCard } from "../../components/chartsCards/MaintenanceCard";
+//import { InactiveCard } from "../../components/chartsCards/InactiveAssetsCard";
+//import { AssetStatusChart } from "../../components/chartsCards/assetStatusChart";
+//import {AssetPreview} from "../../components/chartsCards/AssetPreview";
+//import { MaintenanceTrendChart } from "../../components/chartsCards/MaintenanceTrendChart";
+//import { maintenanceHis } from "../../components/dashboard/data/maintenanceMock";
 import TopAssetsTable from "../../components/chartsCards/TopAssetsTable";
 import DashboardCards from "../../components/chartsCards/DashboardCards";
 import FinancialAllocationChart from "../../components/chartsCards/FinancialAllocationChart";
@@ -26,47 +26,8 @@ export default function FeaturedInfo() {
 
   const withinDays = (date, days) => daysDiff(date) <= days;
 
-  // ---------------- SUBSCRIPTIONS ----------------
-  const subscriptions = assetsMock.filter(a => a.subscriptionType);
-
-  const subWeek = subscriptions.filter(a =>
-    withinDays(a.subscriptionEndDate, 7)
-  );
-
-  const subMonth = subscriptions.filter(a =>
-    withinDays(a.subscriptionEndDate, 30)
-  );
-
-  const subYear = subscriptions.filter(a =>
-    withinDays(a.subscriptionEndDate, 365)
-  );
-
-  // ---------------- MAINTENANCE ----------------
-  const maintWeek = assetsMock.filter(a =>
-    withinDays(a.nextMaintenance, 7)
-  );
-
-  const maintMonth = assetsMock.filter(a =>
-    withinDays(a.nextMaintenance, 30)
-  );
-
-  const maintYear = assetsMock.filter(a =>
-    withinDays(a.nextMaintenance, 365)
-  );
-
-  // ---------------- INACTIVE ----------------
-  const inactiveWeek = assetsMock.filter(a =>
-    withinDays(a.lastMaintenance || a.purchaseDate, 7)
-  );
-
-  const inactiveMonth = assetsMock.filter(a =>
-    withinDays(a.lastMaintenance || a.purchaseDate, 30)
-  );
-
-  const inactiveYear = assetsMock.filter(a =>
-    withinDays(a.lastMaintenance || a.purchaseDate, 365)
-  );
- 
+  
+  
   // ----------- Asset Status Chart ------------
   const data = {
   active: assetsMock.filter(a => a.status === 'Active').length,

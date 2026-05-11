@@ -39,12 +39,27 @@ const Field = ({ error, required, ...props }) => (
     sx={{
       '& .MuiInputBase-root':{
         height: 60,
-        width: 250
+        width: 500
       }
     }}
 
     {...props}
   />
+);
+
+/* =========================
+   FORM FIELD WRAPPER (FIX)
+========================= */
+const FormField = ({ label, icon, children }) => (
+  <Box>
+    <Box display="flex" alignItems="center" gap={1} mb={0.8}>
+      {icon}
+      <Typography variant="body2" fontWeight={600} color="text.secondary">
+        {label}
+      </Typography>
+    </Box>
+    {children}
+  </Box>
 );
 
 export default function AddAssetDialog({ open, onClose }) {
@@ -55,7 +70,7 @@ export default function AddAssetDialog({ open, onClose }) {
   const [form, setForm] = React.useState({
     name: "",
     asset_type: "",
-    category_id: "",   // ✅ change this
+    category_id: "",   
     serial_number: "",
     status: "AVAILABLE",
     location: "",
@@ -68,6 +83,7 @@ export default function AddAssetDialog({ open, onClose }) {
     assigned_to: "",
   });
 
+  //const [form, setForm] = React.useState(intialForm);
   const [errors, setErrors] = React.useState({});
 
   // Fetch Categories
@@ -171,145 +187,257 @@ export default function AddAssetDialog({ open, onClose }) {
         PaperProps={{ sx: { borderRadius: 3 } }}
       >
         <DialogTitle sx={{ pb: 1 }}>
-          <Typography variant="h6" fontWeight={600}>
+          <Typography variant="h6" fontWeight={500}>
             Add New Asset
           </Typography>
         </DialogTitle>
 
-        <DialogContent dividers sx={{ py: 4 }}>
-          {/* Basic Information */}
-          <Box sx={{ mb: 5 }}>
-            <Box display="flex" alignItems="center" gap={1} mb={3}>
-              <Inventory color="primary" />
-              <Typography variant="h6" fontWeight={600}>
-                Basic Information
-              </Typography>
-            </Box>
+        <DialogContent>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 4,
+            mt: 1,
+            alignItems: "center",
+          }}
+        >
 
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
-                <Field select label="Category" 
-                value={form.category_id} 
-                onChange={handleChange("category_id")} 
-                error={errors.category_id} required>
-                  {categories.map((cat) => (
-                    <MenuItem key={cat.id} value={cat.id}>
-                      {cat.name}
-                    </MenuItem>
-                  ))}
-                </Field>
-              </Grid>
+          {/* ================= BASIC INFO ================= */}
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <Box sx={{ width: 500 }}>
 
-              <Grid item xs={12} md={6}>
-                <Field label="Asset Name" value={form.name} onChange={handleChange("name")} error={errors.name} required />
-              </Grid>
+              <Box sx={{
+                backgroundColor: "#e0e0e0",
+                padding: "6px 12px",
+                borderRadius: "8px",
+                mb: 2,
+                textAlign: "center",
+              }}>
+                <Typography fontWeight="bold">
+                  Basic Information
+                </Typography>
+              </Box>
 
-              <Grid item xs={12} md={6}>
-                <Field label="Asset Type / Model" value={form.asset_type} onChange={handleChange("asset_type")} placeholder="e.g. Dell XPS 15" />
-              </Grid>
+              <Grid container spacing={2}>
 
-              <Grid item xs={12} md={6}>
-                <Field label="Serial Number" value={form.serial_number} onChange={handleChange("serial_number")} error={errors.serial_number} required />
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <Field select label="Status" value={form.status} onChange={handleChange("status")}>
-                  <MenuItem value="AVAILABLE">Available</MenuItem>
-                  <MenuItem value="IN_USE">In Use</MenuItem>
-                  <MenuItem value="MAINTENANCE">Under Maintenance</MenuItem>
-                  <MenuItem value="RETIRED">Retired</MenuItem>
-                </Field>
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <Field label="Location" value={form.location} onChange={handleChange("location")} error={errors.location} required placeholder="e.g. Head Office - Room 204" />
-              </Grid>
-            </Grid>
-          </Box>
-
-          <Divider sx={{ my: 4 }} />
-
-          {/* Technical Specifications */}
-          <Box sx={{ mb: 5 }}>
-            <Box display="flex" alignItems="center" gap={1} mb={3}>
-              <Settings color="primary" />
-              <Typography variant="h6" fontWeight={600}>
-                Technical Specifications
-              </Typography>
-            </Box>
-
-            <Grid container spacing={3}>
-              {isITCategory ? (
-                <>
-                  <Grid item xs={12} md={6}>
-                    <Field label="IP Address" value={form.ip_address} onChange={handleChange("ip_address")} error={errors.ip_address} required placeholder="192.168.1.45" />
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <Field label="Operating System" value={form.os} onChange={handleChange("os")} error={errors.os} required placeholder="Windows 11 Pro" />
-                  </Grid>
-                </>
-              ) : (
-                <Grid item xs={12}>
-                  <Typography color="text.secondary" align="center" py={3}>
-                    No technical fields required for this category.
-                  </Typography>
+                <Grid item xs={6}>
+                  <FormField label="Category">
+                    <Field
+                      select
+                      value={form.category_id}
+                      onChange={handleChange("category_id")}
+                      error={errors.category_id}
+                      required
+                    >
+                      {categories.map((cat) => (
+                        <MenuItem key={cat.id} value={cat.id}>
+                          {cat.name}
+                        </MenuItem>
+                      ))}
+                    </Field>
+                  </FormField>
                 </Grid>
-              )}
-            </Grid>
-          </Box>
 
-          <Divider sx={{ my: 4 }} />
+                <Grid item xs={6}>
+                  <FormField label="Asset Name">
+                    <Field
+                      value={form.name}
+                      onChange={handleChange("name")}
+                      error={errors.name}
+                      required
+                    />
+                  </FormField>
+                </Grid>
 
-          {/* Financial Details */}
-          <Box sx={{ mb: 5 }}>
-            <Box display="flex" alignItems="center" gap={1} mb={3}>
-              <AttachMoney color="primary" />
-              <Typography variant="h6" fontWeight={600}>
-                Financial Details
-              </Typography>
+                <Grid item xs={6}>
+                  <FormField label="Asset Type / Model">
+                    <Field
+                      value={form.asset_type}
+                      onChange={handleChange("asset_type")}
+                    />
+                  </FormField>
+                </Grid>
+
+                <Grid item xs={6}>
+                  <FormField label="Serial Number">
+                    <Field
+                      value={form.serial_number}
+                      onChange={handleChange("serial_number")}
+                      error={errors.serial_number}
+                      required
+                    />
+                  </FormField>
+                </Grid>
+
+                <Grid item xs={6}>
+                  <FormField label="Status">
+                    <Field
+                      select
+                      value={form.status}
+                      onChange={handleChange("status")}
+                    >
+                      <MenuItem value="AVAILABLE">Available</MenuItem>
+                      <MenuItem value="IN_USE">In Use</MenuItem>
+                      <MenuItem value="MAINTENANCE">Maintenance</MenuItem>
+                      <MenuItem value="RETIRED">Retired</MenuItem>
+                    </Field>
+                  </FormField>
+                </Grid>
+
+                <Grid item xs={6}>
+                  <FormField label="Location">
+                    <Field
+                      value={form.location}
+                      onChange={handleChange("location")}
+                      error={errors.location}
+                      required
+                    />
+                  </FormField>
+                </Grid>
+
+              </Grid>
+
             </Box>
-
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
-                <Field label="Purchase Cost" type="number" value={form.purchaseCost} onChange={handleChange("purchaseCost")} error={errors.purchaseCost} required InputProps={{ startAdornment: <InputAdornment position="start">$</InputAdornment> }} />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Field type="date" label="Purchase Date" value={form.dateOfPurchase} onChange={handleChange("dateOfPurchase")} error={errors.dateOfPurchase} required InputLabelProps={{ shrink: true }} />
-              </Grid>
-            </Grid>
           </Box>
 
-          <Divider sx={{ my: 4 }} />
+          {/* ================= TECHNICAL ================= */}
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <Box sx={{ width: 500 }}>
 
-          {/* Audit Details */}
-          <Box sx={{ mb: 4 }}>
-            <Box display="flex" alignItems="center" gap={1} mb={3}>
-              <FactCheck color="primary" />
-              <Typography variant="h6" fontWeight={600}>
-                Audit Details
-              </Typography>
+              <Box sx={{
+                backgroundColor: "#e0e0e0",
+                padding: "6px 12px",
+                borderRadius: "8px",
+                mb: 2,
+                textAlign: "center",
+              }}>
+                <Typography fontWeight="bold">
+                  Technical Specifications
+                </Typography>
+              </Box>
+
+              <Grid container spacing={2}>
+
+                {isITCategory ? (
+                  <>
+                    <Grid item xs={6}>
+                      <FormField label="IP Address">
+                        <Field
+                          value={form.ip_address}
+                          onChange={handleChange("ip_address")}
+                          error={errors.ip_address}
+                          required
+                        />
+                      </FormField>
+                    </Grid>
+
+                    <Grid item xs={6}>
+                      <FormField label="Operating System">
+                        <Field
+                          value={form.os}
+                          onChange={handleChange("os")}
+                          error={errors.os}
+                          required
+                        />
+                      </FormField>
+                    </Grid>
+                  </>
+                ) : (
+                  <Grid item xs={12}>
+                    <Typography color="text.secondary" align="center" py={2}>
+                      No technical fields required for this category.
+                    </Typography>
+                  </Grid>
+                )}
+
+              </Grid>
+
             </Box>
-
-            <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
-                <Field
-                  label="Assigned To"
-                  value={form.assigned_to}
-                  onChange={handleChange("assigned_to")}
-                  error={errors.assigned_to}
-                  required
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <AssignmentInd />
-                      </InputAdornment>
-                    ),
-                  }}
-                />
-              </Grid>
-            </Grid>
           </Box>
-        </DialogContent>
+
+          {/* ================= FINANCIAL ================= */}
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <Box sx={{ width: 500 }}>
+
+              <Box sx={{
+                backgroundColor: "#e0e0e0",
+                padding: "6px 12px",
+                borderRadius: "8px",
+                mb: 2,
+                textAlign: "center",
+              }}>
+                <Typography fontWeight="bold">
+                  Financial Details
+                </Typography>
+              </Box>
+
+              <Grid container spacing={2}>
+
+                <Grid item xs={6}>
+                  <FormField label="Purchase Cost">
+                    <Field
+                      type="number"
+                      value={form.purchaseCost}
+                      onChange={handleChange("purchaseCost")}
+                      error={errors.purchaseCost}
+                      required
+                    />
+                  </FormField>
+                </Grid>
+
+                <Grid item xs={6}>
+                  <FormField label="Purchase Date">
+                    <Field
+                      type="date"
+                      value={form.dateOfPurchase || ""}
+                      onChange={handleChange("dateOfPurchase")}
+                      error={errors.dateOfPurchase}
+                      required
+                    />
+                  </FormField>
+                </Grid>
+
+              </Grid>
+
+            </Box>
+          </Box>
+
+          {/* ================= AUDIT ================= */}
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <Box sx={{ width: 500 }}>
+
+              <Box sx={{
+                backgroundColor: "#e0e0e0",
+                padding: "6px 12px",
+                borderRadius: "8px",
+                mb: 2,
+                textAlign: "center",
+              }}>
+                <Typography fontWeight="bold">
+                  Audit Details
+                </Typography>
+              </Box>
+
+              <Grid container spacing={2}>
+
+                <Grid item xs={6}>
+                  <FormField label="Assigned To">
+                    <Field
+                      value={form.assigned_to}
+                      onChange={handleChange("assigned_to")}
+                      error={errors.assigned_to}
+                    />
+                  </FormField>
+                </Grid>
+
+              </Grid>
+
+            </Box>
+          </Box>
+
+        </Box>
+      </DialogContent>
 
         <DialogActions sx={{ px: 3, py: 2.5 }}>
           <Button onClick={onClose} disabled={loading}>

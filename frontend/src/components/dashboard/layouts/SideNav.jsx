@@ -23,7 +23,6 @@ const navItems = [
   { title: 'Main Assets', path: '/assetspages/main', icon: <Inventory2Icon />, section: 'main' },
   { title: 'IT Assets', path: '/assetspages/it', icon: <ComputerIcon />, section: 'main' },
 
-  { title: 'Asset Details', path: '/assetspages/details', icon: <InfoIcon />, section: 'maintenance' },
   { title: 'Maintenance History', path: '/assetspages/pages/maintenance/his', icon: <TrendUpIcon />, section: 'maintenance' },
 
 
@@ -32,6 +31,8 @@ const navItems = [
   // Admin only
   { title: 'User Tracker', path: '/assetspages/pages/admin/tracker', icon: <PersonIcon />, section: 'admin' },
   { title: 'User Management', path: '/assetspages/pages/admin/users', icon: <PersonIcon />, section: 'admin' },
+  {/*{ title: 'Asset Details', path: '/assetspages/details', icon: <InfoIcon />, section: 'maintenance' }, */}
+ 
 ];
 
 const Section = ({ title, open, children }) => (

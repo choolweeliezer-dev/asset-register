@@ -43,19 +43,33 @@ const Field = ({ error, required, ...props }) => (
     sx={{
       "& .MuiInputBase-root": {
         height: 60,
-        width: 150,
+        width: 500,
       },
     }}
     {...props}
   />
 );
 
+// =========================
+// FORM FIELD WRAPPER (NEW)
+// =========================
+const FormField = ({ label, children }) => (
+  <Box>
+    <Typography
+      variant="body2"
+      fontWeight={600}
+      color="text.secondary"
+      sx={{ mb: 0.8 }}
+    >
+      {label}
+    </Typography>
+    {children}
+  </Box>
+);
+
 export default function MaintenanceFormDialog({ open, onClose }) {
   const queryClient = useQueryClient();
 
-  // =========================
-  // STATE
-  // =========================
   const [loading, setLoading] = React.useState(false);
   const [success, setSuccess] = React.useState(false);
   const [errors, setErrors] = React.useState({});
@@ -69,9 +83,6 @@ export default function MaintenanceFormDialog({ open, onClose }) {
     status: "PENDING",
   });
 
-  // =========================
-  // HANDLE CHANGE
-  // =========================
   const handleChange = (field) => (e) => {
     setForm((prev) => ({
       ...prev,
@@ -86,27 +97,15 @@ export default function MaintenanceFormDialog({ open, onClose }) {
     }
   };
 
-  // =========================
-  // VALIDATION
-  // =========================
   const validate = () => {
     const newErrors = {};
 
-    if (!form.assetCode) {
-      newErrors.assetCode = "Asset code is required";
-    }
-
-    if (!form.description?.trim()) {
+    if (!form.assetCode) newErrors.assetCode = "Asset code is required";
+    if (!form.description?.trim())
       newErrors.description = "Description is required";
-    }
-
-    if (!form.performedBy?.trim()) {
+    if (!form.performedBy?.trim())
       newErrors.performedBy = "Technician name is required";
-    }
-
-    if (!form.cost) {
-      newErrors.cost = "Maintenance cost is required";
-    }
+    if (!form.cost) newErrors.cost = "Maintenance cost is required";
 
     if (form.status === "PENDING" && !form.scheduledDate) {
       newErrors.scheduledDate = "Scheduled date is required";
@@ -116,9 +115,6 @@ export default function MaintenanceFormDialog({ open, onClose }) {
     return Object.keys(newErrors).length === 0;
   };
 
-  // =========================
-  // MUTATION
-  // =========================
   const mutation = useMutation({
     mutationFn: createMaintenance,
 
@@ -152,9 +148,6 @@ export default function MaintenanceFormDialog({ open, onClose }) {
     },
   });
 
-  // =========================
-  // SUBMIT
-  // =========================
   const handleSubmit = async () => {
     if (!validate()) return;
 
@@ -170,202 +163,237 @@ export default function MaintenanceFormDialog({ open, onClose }) {
       status: form.status,
     };
 
-    console.log("SUBMITTING:", payload);
-
     try {
       await mutation.mutateAsync(payload);
-    } catch (error) {
-      console.log(error);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <>
-      <Dialog
-        open={open}
-        onClose={onClose}
-        maxWidth="sm"
-        fullWidth
-        PaperProps={{
-          sx: {
-            maxHeight: "90vh",
-            overflowY: "auto",
-            borderRadius: 3,
-          },
-        }}
-      >
-        {/* TITLE */}
-        <DialogTitle>
-          <Typography variant="h6" fontWeight={600}>
-            Submit Maintenance Report
-          </Typography>
-        </DialogTitle>
+  <>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      maxWidth="sm"
+      fullWidth
+       PaperProps={{
+        sx: {
+          borderRadius: 4,
+          overflow: "hidden",
+          background: "linear-gradient(180deg, #2e3643 0%, #072c68 100%)",
+        },
+      }}
+    >
+      {/* TITLE */}
+      <DialogTitle
+      sx={{
+        color: "#f5f5f5",
+      }}>
+        <Typography variant="h6" fontWeight={600}>
+          Submit Maintenance Report
+        </Typography>
+      </DialogTitle>
 
-        <DialogContent dividers sx={{ py: 3 }}>
-          <Box sx={{ mb: 3 }}>
-            <Box display="flex" alignItems="center" gap={1} mb={2}>
-              <Build color="primary" />
-              <Typography variant="h6" fontWeight={600}>
-                Maintenance Information
-              </Typography>
-            </Box>
+      <DialogContent>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 4,
+            mt: 1,
+            alignItems: "center",
+            py: 4,
+            background:
+              "linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.35) 100%)",
+            backdropFilter: "blur(6px)",
+          }}
+        >
 
-            <Grid container spacing={2}>
-              {/* ASSET CODE */}
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  label="Asset Code"
-                  value={form.assetCode}
-                  onChange={handleChange("assetCode")}
-                  error={!!errors.assetCode}
-                  helperText={errors.assetCode}
-                  required
-                />
-              </Grid>
+          {/* ================= MAINTENANCE INFO ================= */}
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <Box sx={{ width: 500 }}>
 
-              {/* STATUS */}
-              <Grid item xs={12}>
-                <TextField
-                  select
-                  fullWidth
-                  label="Status"
-                  value={form.status}
-                  onChange={handleChange("status")}
-                >
-                  <MenuItem value="PENDING">Pending</MenuItem>
-                  <MenuItem value="IN_PROGRESS">In Progress</MenuItem>
-                  <MenuItem value="COMPLETED">Completed</MenuItem>
-                  <MenuItem value="FAILED">Failed</MenuItem>
-                </TextField>
-              </Grid>
+              <Box sx={{
+                backgroundColor: "#e0e0e0",
+                padding: "6px 12px",
+                borderRadius: "8px",
+                mb: 2,
+                textAlign: "center",
+              }}>
+                <Typography fontWeight="bold">
+                  Maintenance Information
+                </Typography>
+              </Box>
 
-              {/* DESCRIPTION */}
-              <Grid item xs={12}>
-                <TextField
-                  fullWidth
-                  multiline
-                  rows={3}
-                  label="Description"
-                  value={form.description}
-                  onChange={handleChange("description")}
-                  error={!!errors.description}
-                  helperText={errors.description}
-                  required
-                />
-              </Grid>
-            </Grid>
-          </Box>
-
-          <Divider sx={{ my: 3 }} />
-
-          {/* SCHEDULING */}
-          <Box sx={{ mb: 3 }}>
-            <Box display="flex" alignItems="center" gap={1} mb={2}>
-              <Event color="primary" />
-              <Typography variant="h6" fontWeight={600}>
-                Scheduling
-              </Typography>
-            </Box>
-
-            <Grid container spacing={2}>
-              {form.status === "PENDING" && (
-                <Grid item xs={12}>
-                  <Field
-                    type="date"
-                    label="Scheduled Date"
-                    value={form.scheduledDate}
-                    onChange={handleChange("scheduledDate")}
-                    error={errors.scheduledDate}
-                    required
-                    InputLabelProps={{ shrink: true }}
-                  />
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <FormField label="Asset Code">
+                    <Field
+                      value={form.assetCode}
+                      onChange={handleChange("assetCode")}
+                      error={errors.assetCode}
+                    />
+                  </FormField>
                 </Grid>
-              )}
-            </Grid>
-          </Box>
 
-          <Divider sx={{ my: 3 }} />
+                <Grid item xs={6}>
+                  <FormField label="Status">
+                    <Field
+                      select
+                      value={form.status}
+                      onChange={handleChange("status")}
+                    >
+                      <MenuItem value="PENDING">Pending</MenuItem>
+                      <MenuItem value="IN_PROGRESS">In Progress</MenuItem>
+                      <MenuItem value="COMPLETED">Completed</MenuItem>
+                      <MenuItem value="FAILED">Failed</MenuItem>
+                    </Field>
+                  </FormField>
+                </Grid>
 
-          {/* TECHNICIAN */}
-          <Box sx={{ mb: 3 }}>
-            <Box display="flex" alignItems="center" gap={1} mb={2}>
-              <Engineering color="primary" />
-              <Typography variant="h6" fontWeight={600}>
-                Technician
-              </Typography>
-            </Box>
-
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <Field
-                  label="Performed By"
-                  value={form.performedBy}
-                  onChange={handleChange("performedBy")}
-                  error={errors.performedBy}
-                  required
-                />
+                <Grid item xs={12}>
+                  <FormField label="Description">
+                    <Field
+                      multiline
+                      rows={2}
+                      value={form.description}
+                      onChange={handleChange("description")}
+                      error={errors.description}
+                    />
+                  </FormField>
+                </Grid>
               </Grid>
-            </Grid>
-          </Box>
 
-          <Divider sx={{ my: 3 }} />
-
-          {/* COST */}
-          <Box>
-            <Box display="flex" alignItems="center" gap={1} mb={2}>
-              <AttachMoney color="primary" />
-              <Typography variant="h6" fontWeight={600}>
-                Cost
-              </Typography>
             </Box>
-
-            <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <Field
-                  type="number"
-                  label="Maintenance Cost"
-                  value={form.cost}
-                  onChange={handleChange("cost")}
-                  error={errors.cost}
-                  required
-                />
-              </Grid>
-            </Grid>
           </Box>
-        </DialogContent>
 
-        {/* ACTIONS */}
-        <DialogActions>
-          <Button onClick={onClose} disabled={loading}>
-            Cancel
-          </Button>
+          {/* ================= SCHEDULING ================= */}
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <Box sx={{ width: 500 }}>
 
-          <Button
-            variant="contained"
-            onClick={handleSubmit}
-            disabled={loading}
-            startIcon={
-              loading ? <CircularProgress size={18} /> : <Description />
-            }
-          >
-            {loading ? "Submitting..." : "Submit Report"}
-          </Button>
-        </DialogActions>
-      </Dialog>
+              <Box sx={{
+                backgroundColor: "#e0e0e0",
+                padding: "6px 12px",
+                borderRadius: "8px",
+                mb: 2,
+                textAlign: "center",
+              }}>
+                <Typography fontWeight="bold">
+                  Scheduling
+                </Typography>
+              </Box>
 
-      {/* SUCCESS */}
-      <Snackbar
-        open={success}
-        autoHideDuration={1500}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert severity="success" variant="filled">
-          Maintenance report submitted successfully!
-        </Alert>
-      </Snackbar>
-    </>
+              <Grid container spacing={2}>
+                {form.status === "PENDING" && (
+                  <Grid item xs={6}>
+                    <FormField label="Scheduled Date">
+                      <Field
+                        type="date"
+                        value={form.scheduledDate}
+                        onChange={handleChange("scheduledDate")}
+                        error={errors.scheduledDate}
+                      />
+                    </FormField>
+                  </Grid>
+                )}
+              </Grid>
+
+            </Box>
+          </Box>
+
+          {/* ================= TECHNICIAN ================= */}
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <Box sx={{ width: 500 }}>
+
+              <Box sx={{
+                backgroundColor: "#e0e0e0",
+                padding: "6px 12px",
+                borderRadius: "8px",
+                mb: 2,
+                textAlign: "center",
+              }}>
+                <Typography fontWeight="bold">
+                  Technician
+                </Typography>
+              </Box>
+
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <FormField label="Performed By">
+                    <Field
+                      value={form.performedBy}
+                      onChange={handleChange("performedBy")}
+                      error={errors.performedBy}
+                    />
+                  </FormField>
+                </Grid>
+              </Grid>
+
+            </Box>
+          </Box>
+
+          {/* ================= COST ================= */}
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <Box sx={{ width: 500 }}>
+
+              <Box sx={{
+                backgroundColor: "#e0e0e0",
+                padding: "6px 12px",
+                borderRadius: "8px",
+                mb: 2,
+                textAlign: "center",
+              }}>
+                <Typography fontWeight="bold">
+                  Cost
+                </Typography>
+              </Box>
+
+              <Grid container spacing={2}>
+                <Grid item xs={6}>
+                  <FormField label="Maintenance Cost">
+                    <Field
+                      type="number"
+                      value={form.cost}
+                      onChange={handleChange("cost")}
+                      error={errors.cost}
+                    />
+                  </FormField>
+                </Grid>
+              </Grid>
+
+            </Box>
+          </Box>
+
+        </Box>
+      </DialogContent>
+
+      {/* ACTIONS */}
+      <DialogActions>
+        <Button onClick={onClose} disabled={loading}>
+          Cancel
+        </Button>
+
+        <Button
+          variant="contained"
+          onClick={handleSubmit}
+          disabled={loading}
+        >
+          {loading ? "Submitting..." : "Submit Report"}
+        </Button>
+      </DialogActions>
+    </Dialog>
+
+    {/* SUCCESS */}
+    <Snackbar
+      open={success}
+      autoHideDuration={1500}
+      anchorOrigin={{ vertical: "top", horizontal: "center" }}
+    >
+      <Alert severity="success" variant="filled">
+        Maintenance report submitted successfully!
+      </Alert>
+    </Snackbar>
+  </>
   );
 }

@@ -12,6 +12,23 @@ import { useNavigate } from "react-router-dom";
 import { loginUser } from "../../api/authApi";
 //import { useEffect } from "react";
 
+export const FormField = ({ label, children }) => {
+  return (
+    <Box sx={{ mb: 2 }}>
+      <Typography
+        variant="body2"
+        fontWeight={600}
+        color="text.secondary"
+        sx={{ mb: 0.8 }}
+      >
+        {label}
+      </Typography>
+
+      {children}
+    </Box>
+  );
+};
+
 export default function SignIn() {
 
   const navigate = useNavigate();
@@ -82,33 +99,62 @@ export default function SignIn() {
           }}
         >
           <CardContent sx={{ p: 4 }}>
-            <Typography variant="h5" gutterBottom>
-              Sign In
-            </Typography>
+             {/* LOGO */}
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  //backgroundColor: '#fff',
+                  padding: '6px 10px',
+                  borderRadius: '10px',
+                }}
+              >
+                <img
+                  src="/tylerlogo.png"
+                  alt="logo"
+                  style={{ width: 250 }}
+                />
+              </Box>
 
-            <Typography variant="body2" sx={{ mb: 3 }}>
+            <Box sx={{ textAlign: "center", mt: 1, mb:3 }}>
+              <Typography
+                variant="body2"
+                sx={{
+                  fontStyle: "italic",
+                  color: "text.secondary",
+                }}
+              >
+                Simplifying Lives Digitally
+              </Typography>
+            </Box>
+
+            <Typography variant="body1" sx={{ mb: 1, textAlign: "center", fontWeight: 470 }}>
               Enter your credentials to continue
             </Typography>
 
             <Box>
-              <TextField
-                fullWidth
-                label="Email"
-                margin="normal"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
 
-              <TextField
-                fullWidth
-                label="Password"
-                type="password"
-                margin="normal"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <FormField label="Email">
+                <TextField
+                  fullWidth
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </FormField>
+
+              <FormField label="Password">
+                <TextField
+                  fullWidth
+                  type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </FormField>
+
+
 
               {error && (
                 <Typography color="error" sx={{ mt: 1 }}>
@@ -131,6 +177,17 @@ export default function SignIn() {
                 {loading ? "Signing In..." : "Sign In"}
               </Button>
             </Box>
+
+            <Box sx={{ mt: 4, textAlign: "center" }}>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: "text.secondary",
+                  }}
+                >
+                  © 2026 TYLERSOFT-ELECTICS. All Rights Reserved.
+                </Typography>
+              </Box>
           </CardContent>
         </Card>
       </Box>
