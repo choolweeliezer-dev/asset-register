@@ -27,42 +27,42 @@ const StatCard = ({ title, value, subtitle, icon }) => (
       }}
     >
       {/* Top Section */}
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        width="100%"
-      >
-        <Typography
-          variant="h6"
-          sx={{
-            fontWeight: 600,
-            fontSize: "1.2rem",
-            flexGrow: 1,
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            span: screenLeft,
-          }}
-        >
-          {title}
-        </Typography>
+<Box
+  display="flex"
+  alignItems="center"
+  width="100%"
+>
+  <Typography
+    variant="h6"
+    sx={{
+      fontWeight: 600,
+      fontSize: "1.2rem",
+      display: "flex",
+      alignItems: "center",
+      gap: 1,
+      whiteSpace: "nowrap",
+      overflow: "hidden",
+      textOverflow: "ellipsis",
+    }}
+  >
+    <span
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+       // backgroundColor: "#f5f5f5",
+        borderRadius: "12px",
+        width: "30px",
+        height: "30px",
+        flexShrink: 0,
+      }}
+    >
+      {icon}
+    </span>
 
-        <Box
-          sx={{
-            backgroundColor: "#f5f5f5",
-            borderRadius: "12px",
-            width: 42,
-            height: 42,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-          }}
-        >
-          {icon}
-        </Box>
-      </Box>
+    {title}
+  </Typography>
+</Box>
 
       {/* Middle Value */}
       <Box>
@@ -129,7 +129,7 @@ export default function DashboardCards() {
 
       <Grid item xs={12} sm={6} lg={3}>
         <StatCard
-          title="Subscriptions"
+          title="Active Subscriptions"
           value={summary?.activeSubscriptions || 0}
           icon={<SubscriptionsIcon fontSize="small" color="success" />}
         />
