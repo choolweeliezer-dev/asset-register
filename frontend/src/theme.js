@@ -48,7 +48,7 @@ export const getTheme = (mode) =>
     },
 
      shape: {
-      borderRadius: 12, 
+      borderRadius: 2, 
     },
 
 
@@ -56,7 +56,7 @@ export const getTheme = (mode) =>
       MuiCard: {
         styleOverrides: {
           root: {
-            borderRadius: 16,
+            borderRadius: 10,
             boxShadow:
               mode === "dark"
                 ? "0 8px 24px rgba(0,0,0,0.4)"
@@ -83,7 +83,7 @@ export const getTheme = (mode) =>
           root: {
             textTransform: 'none',
             fontWeight: 600,
-            borderRadius: 10,
+            borderRadius: 5,
           },
         },
       },

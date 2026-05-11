@@ -1,4 +1,5 @@
 import React from "react";
+import Box from "@mui/material/Box";
 import { Grid } from "@mui/material";
 import { assetsMock } from "../../components/dashboard/data/assetsMock";
 
@@ -9,6 +10,10 @@ import { AssetStatusChart } from "../../components/chartsCards/assetStatusChart"
 import {AssetPreview} from "../../components/chartsCards/AssetPreview";
 import { MaintenanceTrendChart } from "../../components/chartsCards/MaintenanceTrendChart";
 import { maintenanceHis } from "../../components/dashboard/data/maintenanceMock";
+import TopAssetsTable from "../../components/chartsCards/TopAssetsTable";
+import DashboardCards from "../../components/chartsCards/DashboardCards";
+import FinancialAllocationChart from "../../components/chartsCards/FinancialAllocationChart";
+import MaintenanceStatusChart from "../../components/chartsCards/MaintenanceStatusChart";
 
 export default function FeaturedInfo() {
 
@@ -71,9 +76,15 @@ export default function FeaturedInfo() {
 
 
   return (
+
+    
     <Grid container spacing={3}>
 
-      <SubscriptionCard
+       <Grid>
+        <DashboardCards/>
+         </Grid>
+
+     {/* <SubscriptionCard
         subWeek={subWeek}
         subMonth={subMonth}
         subYear={subYear}
@@ -93,20 +104,21 @@ export default function FeaturedInfo() {
       
       {/**Left: Trend*/}
       <Grid item xs={12} md={8}>
-        <MaintenanceTrendChart
-          categories={maintenanceHis.categories}
-          data={maintenanceHis.data}
+        <FinancialAllocationChart
         />
       </Grid>
 
       {/**Right: Pie */}
-      <Grid item xs={12} md={4}>
-        <AssetStatusChart data={data} />
-      </Grid>
-       
+      <Grid item xs={12}>
+        <Box width="1000px">
+           <MaintenanceStatusChart />
+        </Box>
 
-      <AssetPreview/>
+
+      </Grid>
+      <TopAssetsTable/>
     </Grid> 
+    
     
   );
 }

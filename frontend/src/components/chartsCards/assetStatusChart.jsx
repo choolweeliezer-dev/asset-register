@@ -54,7 +54,7 @@ export  function AssetStatusChart({ data }) {
         >
 
           {/* Right: CHART */}
-          <Box sx={{ flex: 1 }}>
+          <Box sx={{ flex: 1, width: 350 }}>
             <Chart
               height={350}
               options={chartOptions}

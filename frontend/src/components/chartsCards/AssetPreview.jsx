@@ -13,26 +13,16 @@ import {
   TableRow,
   Button,
   Chip,
+  TableContainer,
 } from "@mui/material";
-//import { useNavigate } from "react-router-dom";
 
-import { assetsMock } from "../dashboard/data/assetsMock";
 import { Link } from "react-router-dom";
-//import ItAssets from "../../pages/assetspages/ItAssets";
-//import MainAssets from "../../pages/assetspages/MainAssets";
+import { assetsMock } from "../dashboard/data/assetsMock";
 
 export function AssetPreview() {
- // const navigate = useNavigate();
 
-  // MAIN ASSETS (first 5 non-IT assets)
-  const mainAssets = assetsMock
-  .filter(asset => asset.id.startsWith("A"))
-  .slice(0, 5);
-
-  // IT ASSETS (first 5 IT assets)
-  const itAssets = assetsMock
-  .filter(asset => asset.id.startsWith("IT"))
-  .slice(0, 5);
+  // SHOW FIRST 10 ASSETS
+  const assets = assetsMock.slice(0, 10);
 
   const getStatusColor = (status) => {
     if (status === "Active") return "success";
@@ -40,81 +30,87 @@ export function AssetPreview() {
     return "error";
   };
 
-  const AssetTable = ({ title, data, route }) => (
-    <Card sx={{ height: "100%" }}>
-      <CardContent>
-
-        <Typography variant="h6" sx={{ mb: 2 }}>
-          {title}
-        </Typography>
-
-        <Table size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Location</TableCell>
-              <TableCell>Assigned</TableCell>
-            </TableRow>
-          </TableHead>
-
-          <TableBody>
-            {data.map((asset) => (
-              <TableRow key={asset.id}>
-                <TableCell>{asset.name}</TableCell>
-
-                <TableCell>
-                  <Chip
-                    label={asset.status}
-                    color={getStatusColor(asset.status)}
-                    size="small"
-                  />
-                </TableCell>
-
-                <TableCell>{asset.location}</TableCell>
-
-                <TableCell>{asset.assignedTo}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-
-        {/* VIEW MORE */}
-        <Box sx={{ mt: 2, textAlign: "right" }}>
-          <Button
-            size="small"
-            LinkComponent={Link}
-            to={route}
-          >
-            View More →
-          </Button>
-        </Box>
-
-      </CardContent>
-    </Card>
-  );
-
   return (
     <Grid container spacing={3}>
+      <Grid>
 
-      {/* MAIN ASSETS */}
-      <Grid item xs={12} md={6}>
-        <AssetTable
-          title="Main Assets"
-          data={mainAssets}
-          route="/MainAssets"
-        />
+        <Card sx={{width: "100%"}}>
+          <CardContent>
+
+            {/* HEADER */}
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                mb: 2,
+              }}
+            >
+              <Typography variant="h6">
+                Asset Details
+              </Typography>
+
+              <Button
+                size="small"
+                LinkComponent={Link}
+                to="/assets"
+              >
+                View All →
+              </Button>
+            </Box>
+
+            {/* TABLE */}
+            <TableContainer sx={{width: 1120}}>
+              <Table size="small">
+
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Asset ID</TableCell>
+                    <TableCell>Name</TableCell>
+                    <TableCell>Category</TableCell>
+                    <TableCell>Status</TableCell>
+                    <TableCell>Location</TableCell>
+                    <TableCell>Assigned To</TableCell>
+                  </TableRow>
+                </TableHead>
+
+                <TableBody>
+                  {assets.map((asset) => (
+                    <TableRow key={asset.id} hover>
+
+                      <TableCell>{asset.id}</TableCell>
+
+                      <TableCell>{asset.name}</TableCell>
+
+                      <TableCell>
+                        {asset.id.startsWith("IT")
+                          ? "IT Asset"
+                          : "Main Asset"}
+                      </TableCell>
+
+                      <TableCell>
+                        <Chip
+                          label={asset.status}
+                          color={getStatusColor(asset.status)}
+                          size="small"
+                        />
+                      </TableCell>
+
+                      <TableCell>{asset.location}</TableCell>
+
+                      <TableCell>{asset.assignedTo}</TableCell>
+
+                    </TableRow>
+                  ))}
+                </TableBody>
+
+              </Table>
+            </TableContainer>
+
+          </CardContent>
+        </Card>
+
       </Grid>
-
-      {/* IT ASSETS */}
-      <Grid item xs={12} md={6}>
-        <AssetTable
-          title="IT Assets"
-          data={itAssets}
-          route="/ItAssets"
-        />
-      </Grid>
-
     </Grid>
   );
 }

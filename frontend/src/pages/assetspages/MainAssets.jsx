@@ -120,7 +120,8 @@ export default function MainAssets() {
   const filteredData = data.filter(item => {
     const matchesSearch =
       item.name?.toLowerCase().includes(search.toLowerCase()) ||
-      item.location?.toLowerCase().includes(search.toLowerCase()) ||
+      item.assignedTo?.toLowerCase().includes(search.toLowerCase().includes()) ||
+      item.assetCode?.toLowerCase().includes(search.toLowerCase()) ||
       (item.status || "").toLowerCase().includes(search.toLowerCase());
 
     const matchesStatus =
@@ -211,7 +212,7 @@ export default function MainAssets() {
           }}>
             <Box>
               <TextField
-                label="Search"
+                label="Search by name"
                 size="small"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -226,8 +227,9 @@ export default function MainAssets() {
                 sx={{ minWidth: 200 }}
               >
                 <MenuItem value="">All</MenuItem>
-                <MenuItem value="Active">Active</MenuItem>
-                <MenuItem value="Inactive">Inactive</MenuItem>
+                <MenuItem value="AVAILABLE">AVAILABLE</MenuItem>
+                <MenuItem value="ACTIVE">ACTIVE</MenuItem>
+                <MenuItem value="IN_USE">IN_USE</MenuItem>
               </TextField>
 
               <TextField
@@ -239,8 +241,8 @@ export default function MainAssets() {
                 sx={{ minWidth: 200 }}
               >
                 <MenuItem value="">All</MenuItem>
-                <MenuItem value="HQ">HQ</MenuItem>
-                <MenuItem value="Remote">Remote</MenuItem>
+                <MenuItem value="Boardroom">Boardroom</MenuItem>
+                <MenuItem value="Gaborone">Gaborone</MenuItem>
               </TextField>
             </Box>
 
@@ -262,7 +264,6 @@ export default function MainAssets() {
                 <TableCell>Location</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell>Assigned To</TableCell>
-                <TableCell>Next Maintenance</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
@@ -277,7 +278,6 @@ export default function MainAssets() {
                   <TableCell>{sub.location}</TableCell>
                   <TableCell>{sub.status}</TableCell>
                   <TableCell>{sub.assignedTo}</TableCell>
-                  <TableCell>{sub.nextMaintenance}</TableCell>
 
                   <TableCell>
                     <IconButton color="primary"

@@ -258,7 +258,6 @@ export default function ItAssets() {
                 <TableCell>Location</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell>Assigned To</TableCell>
-                <TableCell>Next Maintenance</TableCell>
                 <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
@@ -274,7 +273,6 @@ export default function ItAssets() {
                   <TableCell>{sub.location}</TableCell>
                   <TableCell>{sub.status}</TableCell>
                   <TableCell>{sub.assignedTo}</TableCell>
-                  <TableCell>{sub.nextMaintenance}</TableCell>
 
                   <TableCell>
                     {/* FIX: edit icon was missing stopPropagation — clicking it
