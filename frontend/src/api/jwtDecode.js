@@ -14,3 +14,13 @@ export const getRole = () => {
     return null;
   }
 };
+
+export const isAdmin = () => {
+  const role = getRole();
+
+  return (
+    role === "ADMIN" ||
+    role === "ROLE_ADMIN" ||
+    (Array.isArray(role) && role.includes("ROLE_ADMIN"))
+  );
+};

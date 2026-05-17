@@ -27,6 +27,8 @@ import { useNavigate } from "react-router-dom";
 import { getSubscriptions, deleteSubscription, updateSubscription } from "../../api/subsApi";
 import AddSubPage from "./AddSubPage";
 import AddSubscriptionDialog from "./AddSubForm";
+import { triggerEmailReminderTest } from "../../api/subsApi";
+import { isAdmin } from "../../api/jwtDecode";
 
 export default function SubscriptionTable() {
 
@@ -138,6 +140,16 @@ export default function SubscriptionTable() {
       }
     };
 
+    const handleSend = async () => {
+    try {
+      await triggerEmailReminderTest();
+      alert("Email reminder test triggered successfully!");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to trigger email test");
+    }
+  };
+
   return (
     <Grid item xs={12}>
       <Card>
@@ -179,12 +191,25 @@ export default function SubscriptionTable() {
               </TextField>
             </Box>
 
-            <Button
-              variant="contained"
-              onClick={() => setFormOpen(true)}
-            >
-              Add Subscription
-            </Button>
+           <Box sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+  
+                {isAdmin() && (
+                  <Button
+                    variant="contained"
+                    onClick={handleSend}
+                  >
+                    Test Email Reminders
+                  </Button>
+                )}
+
+                <Button
+                  variant="contained"
+                  onClick={() => setFormOpen(true)}
+                >
+                  Add Subscription
+                </Button>
+
+              </Box>
           </Box>
 
           <Table sx={{

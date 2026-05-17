@@ -11,6 +11,7 @@ import LightModeIcon from "@mui/icons-material/LightMode";
 //import Menu from "@mui/icons-material/Menu";
 //import MenuItem  from '@mui/material/MenuItem';
 
+import { authService } from '../../../api/authService';
 import { useNavigate } from 'react-router-dom';
 import { BellIcon } from '@phosphor-icons/react/dist/ssr/Bell';
 import { MagnifyingGlassIcon } from '@phosphor-icons/react/dist/ssr/MagnifyingGlass';
@@ -28,6 +29,7 @@ export default function TopNav({ onMenuClick }) {
   const handleAvatarClick = (event) => {
     setShowLogout((prev) => !prev);
   };
+  const user = authService.getAuthUser();
 
  // const handleClose = () => {
    // setAnchorEl(null);
@@ -140,11 +142,27 @@ export default function TopNav({ onMenuClick }) {
           </IconButton>
         </Box>
 
+          <Box sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center"
+          }}>
         <Avatar
           src="/assets/avatar.png"
           sx={{ width: 32, height: 32, cursor: "pointer" }}
           onClick={handleAvatarClick}
         />
+          <Typography
+            sx={{
+              fontSize: "0.7rem",
+              color: "white",
+              mt: 0.3,
+              lineHeight: 1
+            }}
+          >
+            {user ? `Hello, ${user.fullName}` : "Guest"}
+          </Typography>
+
           {showLogout && (
             <Typography
               onClick={handleLogout}
@@ -160,7 +178,9 @@ export default function TopNav({ onMenuClick }) {
             >
               Logout
             </Typography>
+           
           )}
+           </Box>
 
       </Stack>
     </Box>

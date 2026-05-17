@@ -17,3 +17,7 @@ export const updateSubscription = (id, data) => {
 export const deleteSubscription = (id) => {
   return axiosClient.delete(`${BASE_URL}/${id}`);
 };
+
+export const triggerEmailReminderTest = async () => {
+  return axiosClient.post("/email/reminders/test");
+};

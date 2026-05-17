@@ -3,7 +3,7 @@
 import axios from "axios";
 
 const axiosClient = axios.create({
-  baseURL: "http://localhost:8080/",
+  baseURL: "http://localhost:9090/api",
   headers: {
     "Content-Type": "application/json",
   },
@@ -17,6 +17,11 @@ axiosClient.interceptors.request.use(
     console.log("➡️ URL:", config.url);
     console.log("➡️ METHOD:", config.method);
     console.log("➡️ TOKEN FROM STORAGE:", token);
+
+    // 🔍 ADD DEBUG HERE
+    console.log("➡️ FULL URL:", config.baseURL + config.url);
+    console.log("➡️ ALL HEADERS (BEFORE):", config.headers);
+
 
     // 🚫 DO NOT attach token to login request
     if (config.url.includes("/users/login")) {
